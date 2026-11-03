@@ -1,0 +1,12 @@
+{
+  "project": "gstack",
+  "url": "https://github.com/garrytan/gstack",
+  "commit": "219f7488bbbfc33e5199ea4a5f3d31f188a7369d",
+  "version": "1.91.292",
+  "checked_at": "2026-11-03",
+  "license": "MIT",
+  "adaptation": "rstack supplies rcode-native workflow instructions and a separate Python stdlib runtime. It does not bundle gstack's browser, iOS binaries or Claude runtime.",
+  "inventory": "inventory.json",
+  "source_mapping": "generator/upstream-map.json",
+  "generator": "generator/generate.py"
+}

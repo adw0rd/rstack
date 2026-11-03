@@ -1,0 +1,627 @@
+#!/usr/bin/env python3
+"""Локальные read-only помощники rstack. Требуется Python 3.10+ и Git."""
+import argparse
+import contextlib
+import hashlib
+import json
+import os
+from pathlib import Path, PurePosixPath
+import re
+import shutil
+import signal
+import stat
+import subprocess
+import sys
+import threading
+
+VERSION = '0.1.0'
+MAX_BYTES = 1024 * 1024
+MAX_COMMAND_BYTES = 4 * MAX_BYTES
+MAX_FILES = 2000
+SECRET_NAMES = {
+    '.git', '.ssh', '.aws', '.azure', '.gnupg', '.kube', '.gcp', 'gcloud',
+    'keys', 'credentials', '.credentials', 'secrets', '.secrets',
+    'credentials.json', 'secrets.json', 'id_rsa', 'id_dsa', 'id_ecdsa',
+    'id_ed25519', '.netrc', '.npmrc', '.pypirc',
+}
+SECRET_SUFFIXES = ('.pem', '.key', '.p12', '.pfx', '.jks', '.keystore')
+
+
+class Failure(Exception):
+    def __init__(self, code, message):
+        super().__init__(message)
+        self.code = code
+
+
+def environment(install=False):
+    names = ['PATH', 'HOME', 'USERPROFILE', 'SYSTEMROOT', 'WINDIR', 'PATHEXT',
+             'TMPDIR', 'TMP', 'TEMP', 'LANG', 'LC_ALL']
+    if install:
+        names += ['RCODE_HOME', 'RCODE_MODEL_SHELL']
+    env = {name: os.environ[name] for name in names if name in os.environ}
+    env.update(GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_GLOBAL=os.devnull,
+               GIT_OPTIONAL_LOCKS='0', GIT_TERMINAL_PROMPT='0')
+    return env
+
+
+def execute(argv, *, cwd=None, data=None, limit=MAX_COMMAND_BYTES, timeout=15, install=False):
+    """Bound both pipes and wall time, without a shell or detached descendants."""
+    try:
+        process = subprocess.Popen(argv, cwd=cwd, env=environment(install),
+                                   stdin=subprocess.PIPE if data is not None else subprocess.DEVNULL,
+                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                   start_new_session=os.name == 'posix')
+    except OSError as error:
+        raise Failure('executable_unavailable', f'Не удалось запустить {Path(argv[0]).name}: {error.strerror}') from None
+    chunks = [bytearray(), bytearray()]
+    lock = threading.Lock()
+    truncated = threading.Event()
+
+    def kill():
+        try:
+            if os.name == 'posix':
+                os.killpg(process.pid, signal.SIGKILL)
+            else:
+                process.kill()
+        except (ProcessLookupError, PermissionError):
+            if process.poll() is None:
+                try:
+                    process.kill()
+                except ProcessLookupError:
+                    pass
+
+    def capture(stream, index):
+        with stream:
+            while block := stream.read(65536):
+                with lock:
+                    room = max(0, limit - len(chunks[0]) - len(chunks[1]))
+                    chunks[index].extend(block[:room])
+                    if len(block) > room:
+                        truncated.set()
+                        kill()
+
+    threads = [threading.Thread(target=capture, args=(stream, index), daemon=True)
+               for index, stream in enumerate([process.stdout, process.stderr])]
+    for thread in threads:
+        thread.start()
+    def write_input():
+        if data is not None:
+            try:
+                process.stdin.write(data)
+            except BrokenPipeError:
+                pass
+            finally:
+                process.stdin.close()
+    writer = None
+    if data is not None:
+        writer = threading.Thread(target=write_input, daemon=True)
+        writer.start()
+    try:
+        process.wait(timeout=timeout)
+    except (subprocess.TimeoutExpired, KeyboardInterrupt):
+        kill()
+        process.wait(timeout=3)
+        for thread in threads:
+            thread.join(timeout=1)
+        raise Failure('command_timeout', 'Команда прервана или превысила ограничение времени') from None
+    finally:
+        # A child that retained pipes must not survive the command's lifetime.
+        if os.name == 'posix':
+            kill()
+    for thread in threads:
+        thread.join(timeout=2)
+    if writer is not None:
+        writer.join(timeout=2)
+    if any(thread.is_alive() for thread in threads):
+        raise Failure('command_timeout', 'Не удалось завершить чтение вывода команды')
+    return process.returncode, bytes(chunks[0]), bytes(chunks[1]), truncated.is_set()
+
+
+def git(root, *args, accepted=(0,), data=None, limit=MAX_COMMAND_BYTES, allow_truncated=False):
+    # check-ignore accepts literal paths on stdin but rejects pathspec magic,
+    # including the global --literal-pathspecs flag.
+    literal = [] if args and args[0] == 'check-ignore' else ['--literal-pathspecs']
+    argv = ['git', '--no-pager', *literal, '-c', 'core.fsmonitor=false',
+            '-c', 'core.untrackedCache=false', '-c', 'core.hooksPath=' + os.devnull,
+            '-C', str(root)]
+    # status/diff may run clean/process filters even with textconv and external
+    # diff disabled. Refuse these instead of executing their code or silently
+    # changing the representation on which the review is based.
+    if args and args[0] in ('status', 'diff'):
+        code, filters, _err, limited = execute([
+            *argv, 'config', '--get-regexp', r'^filter\..*\.(clean|smudge|process)$',
+        ])
+        if limited or code not in (0, 1):
+            raise Failure('git_error', 'Не удалось безопасно проверить Git filters')
+        if code == 0 and filters.strip():
+            raise Failure('unsupported_git_filter', 'В репозитории настроены Git clean/smudge/process filters; автоматический status/diff не выполнялся. Проверьте их отдельно либо используйте файловые инструменты rcode.')
+    argv.extend(args)
+    code, out, _err, truncated = execute(argv, data=data, limit=limit)
+    if truncated and not allow_truncated:
+        raise Failure('command_output_limit', 'Вывод Git превысил лимит; полный снимок не подтверждён')
+    if code not in accepted and not (allow_truncated and truncated):
+        raise Failure('git_error', 'Команда Git не выполнена; проверьте репозиторий и аргументы')
+    return out, truncated
+
+
+def directory(raw):
+    try:
+        path = Path(raw).expanduser().resolve(strict=True)
+    except OSError:
+        raise Failure('invalid_root', 'Рабочий каталог не найден') from None
+    if not path.is_dir():
+        raise Failure('invalid_root', 'Рабочий путь не является каталогом')
+    return path
+
+
+def repository(raw):
+    path = directory(raw)
+    try:
+        out, _ = git(path, 'rev-parse', '--show-toplevel')
+    except Failure:
+        raise Failure('not_git', 'Нужен рабочий Git-репозиторий; сеть автоматически не используется') from None
+    return Path(os.fsdecode(out.rstrip(b'\r\n'))).resolve()
+
+
+def relative(raw):
+    if not raw or '\x00' in raw or '\\' in raw:
+        raise Failure('invalid_path', 'Нужен относительный путь без NUL, обратных слешей и ..')
+    path = PurePosixPath(raw)
+    if path.is_absolute() or '..' in path.parts or (path.parts and ':' in path.parts[0]):
+        raise Failure('invalid_path', 'Путь не может выходить из рабочего каталога')
+    return path.as_posix()
+
+
+def secret(path):
+    return any(part.lower() in SECRET_NAMES or part.lower().startswith('.env')
+               or part.lower().endswith(SECRET_SUFFIXES) for part in PurePosixPath(path).parts)
+
+
+def statuses(root):
+    # Represent moves as a deletion plus an addition. Path-by-path diffs must
+    # retain the removed source instead of hiding it behind a rename record.
+    raw, _ = git(root, 'status', '--porcelain=v1', '-z', '--untracked-files=all', '--no-renames')
+    pieces = raw.split(b'\0')
+    records = []
+    index = 0
+    while index < len(pieces) and pieces[index]:
+        item = pieces[index]
+        index += 1
+        if len(item) < 4:
+            raise Failure('git_error', 'Git вернул некорректный status')
+        status_code = item[:2].decode('ascii')
+        record = {'status': status_code, 'path': os.fsdecode(item[3:])}
+        if 'R' in status_code or 'C' in status_code:
+            if index >= len(pieces) or not pieces[index]:
+                raise Failure('git_error', 'В rename-записи Git отсутствует исходный путь')
+            record['from'] = os.fsdecode(pieces[index])
+            index += 1
+        records.append(record)
+    if len(records) > MAX_FILES:
+        raise Failure('file_limit', 'Больше 2000 изменённых файлов: снимок не создан')
+    return raw, records
+
+
+def ignored(root, paths):
+    if not paths:
+        return set()
+    data = b'\0'.join(os.fsencode(path) for path in paths) + b'\0'
+    out, _ = git(root, 'check-ignore', '--no-index', '-z', '--stdin', accepted=(0, 1), data=data)
+    return {os.fsdecode(path) for path in out.split(b'\0') if path}
+
+
+def safe_read(root, path, maximum=MAX_BYTES):
+    """Do not follow any symlink, including an ancestor of an ordinary file."""
+    if secret(path):
+        return None, 'secret'
+    full = root
+    try:
+        for part in PurePosixPath(relative(path)).parts:
+            full = full / part
+            if stat.S_ISLNK(full.lstat().st_mode):
+                return None, 'symlink'
+        before = full.lstat()
+    except (FileNotFoundError, NotADirectoryError):
+        return None, 'deleted'
+    if not stat.S_ISREG(before.st_mode):
+        return None, 'not_regular_file'
+    if before.st_size > maximum:
+        return None, 'file_too_large'
+    flags = os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_NONBLOCK', 0)
+    try:
+        with contextlib.ExitStack() as stack:
+            # Anchor every ancestor on POSIX, so replacing a directory with a
+            # symlink between the lstat and open cannot escape the skill/project.
+            if os.open in os.supports_dir_fd:
+                parent = os.open(root, os.O_RDONLY | getattr(os, 'O_DIRECTORY', 0) | getattr(os, 'O_NOFOLLOW', 0))
+                stack.callback(os.close, parent)
+                parts = PurePosixPath(relative(path)).parts
+                for part in parts[:-1]:
+                    parent = os.open(part, os.O_RDONLY | getattr(os, 'O_DIRECTORY', 0) | getattr(os, 'O_NOFOLLOW', 0), dir_fd=parent)
+                    stack.callback(os.close, parent)
+                descriptor = os.open(parts[-1], flags, dir_fd=parent)
+            else:
+                descriptor = os.open(full, flags)
+            stream = stack.enter_context(os.fdopen(descriptor, 'rb'))
+            opened = os.fstat(stream.fileno())
+            if not stat.S_ISREG(opened.st_mode):
+                return None, 'not_regular_file'
+            if (before.st_dev, before.st_ino) != (opened.st_dev, opened.st_ino):
+                raise Failure('stale_snapshot', 'Файл изменился во время чтения снимка')
+            content = stream.read(maximum + 1)
+            after = os.fstat(stream.fileno())
+    except OSError:
+        return None, 'unreadable'
+    if len(content) > maximum:
+        return None, 'file_too_large'
+    if (opened.st_size, opened.st_mtime_ns, opened.st_ctime_ns) != (after.st_size, after.st_mtime_ns, after.st_ctime_ns):
+        raise Failure('stale_snapshot', 'Файл изменился во время чтения снимка')
+    return content, None
+
+
+def snapshot(raw_root, base=None):
+    root = repository(raw_root)
+    head = git(root, 'rev-parse', '--verify', 'HEAD')[0].decode().strip()
+    branch = git(root, 'symbolic-ref', '--quiet', '--short', 'HEAD', accepted=(0, 1))[0].decode().strip() or None
+    resolved = head
+    if base is not None:
+        if not base or base.startswith('-') or any(character in base for character in '\x00\r\n'):
+            raise Failure('invalid_base', 'Недопустимая база сравнения')
+        try:
+            commit = git(root, 'rev-parse', '--verify', '--end-of-options', base + '^{commit}')[0].decode().strip()
+            resolved = git(root, 'merge-base', commit, head)[0].decode().strip()
+        except Failure:
+            raise Failure('invalid_base', 'База сравнения не найдена локально или не имеет общего предка') from None
+    raw, records = statuses(root)
+    # Include committed changes relative to a requested base, even on a clean tree.
+    committed = git(root, 'diff', '--no-ext-diff', '--no-textconv', '--no-renames', '--name-only', '-z', resolved, 'HEAD', '--')[0]
+    known = {record['path'] for record in records}
+    for name in committed.split(b'\0'):
+        if name and os.fsdecode(name) not in known:
+            records.append({'path': os.fsdecode(name), 'status': 'committed'})
+    if len(records) > MAX_FILES:
+        raise Failure('file_limit', 'Больше 2000 изменённых файлов: снимок не создан')
+    paths = [record['path'] for record in records]
+    blocked = ignored(root, paths)
+    included, omitted = [], []
+    for record in sorted(records, key=lambda row: row['path']):
+        path = record['path']
+        if path in blocked:
+            omitted.append({'path': path, 'reason': 'ignored'})
+            continue
+        content, reason = safe_read(root, path)
+        if reason and reason != 'deleted':
+            omitted.append({'path': path, 'reason': reason})
+            continue
+        included.append({**record, 'sha256': hashlib.sha256(content).hexdigest() if content is not None else None,
+                         'bytes': len(content) if content is not None else 0, 'deleted': reason == 'deleted'})
+    if statuses(root)[0] != raw or git(root, 'rev-parse', '--verify', 'HEAD')[0].decode().strip() != head:
+        raise Failure('stale_snapshot', 'Рабочее дерево изменилось во время создания снимка')
+    bound = {'head': head, 'base': resolved, 'files': included, 'omitted': omitted}
+    fingerprint = hashlib.sha256(json.dumps(bound, sort_keys=True, ensure_ascii=True).encode()).hexdigest()
+    return {'schema_version': 1, 'root': str(root), 'branch': branch, 'head': head,
+            'base': resolved, 'requested_base': base, 'files': included, 'omitted': omitted,
+            'snapshot': fingerprint,
+            'coverage': 'HEAD plus non-secret, non-ignored changed/untracked regular files up to 1 MiB; not proof of model review'}
+
+
+def diff(args):
+    captured = snapshot(args.root, args.base)
+    root = Path(captured['root'])
+    selected = relative(args.path) if args.path else None
+    entries = [entry for entry in captured['files'] if not selected or selected == '.'
+               or entry['path'] == selected or entry['path'].startswith(selected + '/')]
+    pieces = []
+    truncated = False
+    remaining = args.max_bytes
+    for entry in entries:
+        if remaining <= 0:
+            truncated = True
+            break
+        if entry['status'] == '??':
+            arguments = ['diff', '--no-ext-diff', '--no-textconv', '--no-color', '--no-index', '--', os.devnull, entry['path']]
+            accepted = (0, 1)
+        else:
+            arguments = ['diff', '--no-ext-diff', '--no-textconv', '--no-color', '--no-renames', captured['base'], '--', entry['path']]
+            accepted = (0,)
+        output, limited = git(root, *arguments, accepted=accepted, limit=remaining + 1, allow_truncated=True)
+        if limited or len(output) > remaining:
+            truncated = True
+        pieces.append(output[:remaining])
+        remaining -= len(pieces[-1])
+    # Avoid a partial UTF-8 character extending a byte-limited display.
+    shown = b''.join(pieces).decode('utf-8', errors='ignore')
+    final = snapshot(args.root, args.base)
+    if final['snapshot'] != captured['snapshot']:
+        raise Failure('stale_snapshot', 'Файлы изменились во время чтения diff')
+    return {'schema_version': 1, 'root': str(root), 'base': captured['base'],
+            'snapshot': captured['snapshot'], 'paths': [entry['path'] for entry in entries],
+            'diff': shown, 'shown_bytes': len(shown.encode()), 'truncated': truncated,
+            'omitted': captured['omitted'],
+            'limits': ['Diff is an observation, not an applicable patch when truncated; maximum source file size 1 MiB.']}
+
+
+def project_file(root, name):
+    try:
+        if name in ignored(root, [name]):
+            return None
+    except Failure as error:
+        if error.code != 'git_error':
+            raise
+    return safe_read(root, name)[0]
+
+
+def checks(raw_root):
+    root = directory(raw_root)
+    result = []
+
+    def add(label, argv, source):
+        result.append({'name': label, 'argv': argv, 'source': source,
+                       'executable_available': shutil.which(argv[0]) is not None})
+
+    if project_file(root, 'Cargo.toml') is not None:
+        add('format', ['cargo', 'fmt', '--all', '--check'], 'Cargo.toml')
+        add('lint', ['cargo', 'clippy', '--all-targets', '--', '-D', 'warnings'], 'Cargo.toml')
+        add('test', ['cargo', 'test', '--all-targets'], 'Cargo.toml')
+    pyproject = project_file(root, 'pyproject.toml') or b''
+    if project_file(root, 'pytest.ini') is not None or b'[tool.pytest' in pyproject:
+        add('test', ['python3', '-m', 'pytest'], 'pytest.ini/pyproject.toml')
+    else:
+        for test_directory in ('tests', '.'):
+            directory_path = root / test_directory
+            if directory_path.is_dir() and not directory_path.is_symlink():
+                candidates = list(directory_path.glob('test*.py'))[:MAX_FILES]
+                if any(project_file(root, path.relative_to(root).as_posix()) is not None for path in candidates):
+                    add('test', ['python3', '-m', 'unittest', 'discover', '-s', test_directory, '-v'], 'test*.py')
+                    break
+    package = project_file(root, 'package.json')
+    if package is not None:
+        try:
+            metadata = json.loads(package)
+        except (ValueError, UnicodeDecodeError):
+            raise Failure('invalid_metadata', 'package.json не является корректным JSON') from None
+        if not isinstance(metadata, dict):
+            raise Failure('invalid_metadata', 'package.json должен быть объектом')
+        manager = str(metadata.get('packageManager', '')).split('@')[0]
+        if manager not in ('npm', 'pnpm', 'yarn', 'bun'):
+            manager = next((tool for name, tool in [('pnpm-lock.yaml', 'pnpm'), ('yarn.lock', 'yarn'),
+                           ('bun.lock', 'bun'), ('bun.lockb', 'bun')]
+                           if project_file(root, name) is not None), 'npm')
+        scripts = metadata.get('scripts', {})
+        if not isinstance(scripts, dict):
+            raise Failure('invalid_metadata', 'package.json scripts должен быть объектом')
+        for label in ('test', 'lint', 'typecheck', 'check', 'build'):
+            if isinstance(scripts.get(label), str) and scripts[label].strip():
+                add(label, [manager, 'run', label], 'package.json scripts.' + label)
+    return {'schema_version': 1, 'root': str(root), 'checks': result, 'executed': False,
+            'limits': ['Discovery does not authorize or execute checks. Inspect project instructions and scripts before run_command.']}
+
+
+def doctor(raw_root):
+    root = directory(raw_root)
+    info = {'available': shutil.which('git') is not None, 'worktree': False}
+    if info['available']:
+        try:
+            actual = repository(root)
+            info.update(worktree=True, root=str(actual),
+                        head=git(actual, 'rev-parse', '--verify', 'HEAD', accepted=(0, 128))[0].decode().strip() or None)
+        except Failure:
+            pass
+    return {'schema_version': 1, 'version': VERSION, 'root': str(root),
+            'python': {'executable': sys.executable, 'version': sys.version.split()[0]},
+            'git': info, 'rcode': {'path': shutil.which('rcode')},
+            'capabilities': {'shell': 'rcode_permission_required', 'writes': 'rcode_permission_required',
+                             'browser': 'external_cli_required', 'network': 'not_used',
+                             'publication': 'not_implemented', 'external_models': 'not_used'},
+            'limits': ['Executable discovery does not prove authentication, authorization, or browser access.']}
+
+
+def frontmatter(text):
+    if not text.startswith('---\n') and not text.startswith('---\r\n'):
+        raise Failure('invalid_frontmatter', 'SKILL.md должен начинаться с YAML frontmatter')
+    lines = text.splitlines()
+    try:
+        end = lines[1:].index('---') + 1
+    except ValueError:
+        raise Failure('invalid_frontmatter', 'Frontmatter не закрыт') from None
+    values = {}
+    for index, line in enumerate(lines[1:end], 1):
+        if not line or line.startswith((' ', '\t', '#')):
+            continue
+        match = re.fullmatch(r'([a-zA-Z0-9_-]+):\s*(.*)', line)
+        if not match or match[1] in values:
+            raise Failure('invalid_frontmatter', 'Некорректное или повторяющееся поле frontmatter')
+        key, value = match.groups()
+        if value in ('>', '|', '>-', '|-'):
+            continuation = []
+            for following in lines[index + 1:end]:
+                if following and not following.startswith((' ', '\t')):
+                    break
+                continuation.append(following.strip())
+            value = ('\n' if value.startswith('|') else ' ').join(continuation).strip()
+        elif value.startswith(('"', "'")):
+            if len(value) < 2 or value[-1] != value[0]:
+                raise Failure('invalid_frontmatter', 'Незакрытая строка frontmatter')
+            value = value[1:-1]
+        values[key] = value
+    if not re.fullmatch(r'[a-z0-9][a-z0-9-]{0,63}', values.get('name', '')) or not values.get('description', '').strip():
+        raise Failure('invalid_frontmatter', 'Нужны name (lowercase/digits/hyphens) и непустое description')
+    return values, '\n'.join(lines[end + 1:])
+
+
+def validate(raw_skills):
+    root = directory(raw_skills)
+    found, errors, warnings = [], [], []
+    for skill in sorted(root.iterdir()):
+        if skill.name.startswith('.') or not skill.is_dir():
+            continue
+        if skill.is_symlink():
+            errors.append({'skill': skill.name, 'error': 'symlink', 'message': 'Каталог скилла не должен быть symlink'})
+            continue
+        try:
+            content, reason = safe_read(skill, 'SKILL.md')
+            if reason:
+                raise Failure('missing_skill', 'Нет обычного SKILL.md размером до 1 МиБ')
+            values, body = frontmatter(content.decode('utf-8'))
+            if values['name'] != skill.name:
+                raise Failure('name_mismatch', 'name должен совпадать с именем каталога')
+            found.append(values['name'])
+            for field in ('allowed-tools', 'hooks', 'trusted'):
+                if field in values:
+                    warnings.append({'skill': skill.name, 'field': field, 'message': 'rcode игнорирует это поле; права оно не предоставляет'})
+            if len(content) > 16 * 1024:
+                warnings.append({'skill': skill.name, 'message': 'Большой entrypoint: вынесите условные подробности в references'})
+            links = re.findall(r'\]\(([^)]+)\)', body)
+            # Reference-style definitions are resources too, including unused
+            # definitions. Never attest a traversal merely because it is not inline.
+            links.extend(re.findall(r'(?m)^ {0,3}\[[^\]\n]+\]:[ \t]*(.*)$', body))
+            for raw in links:
+                if not raw.strip():
+                    raise Failure('unsupported_link', 'Адрес reference-ссылки должен находиться на той же строке')
+                target = raw.strip().strip('<>').split(' "', 1)[0].split('#', 1)[0]
+                if not target or re.match(r'https?://|mailto:', target):
+                    continue
+                if re.match(r'[a-zA-Z][a-zA-Z0-9+.-]*:', target):
+                    raise Failure('unsupported_link', 'Ресурс должен быть относительным файлом или внешней http/https ссылкой')
+                try:
+                    path = relative(target)
+                except Failure:
+                    raise Failure('outside_skill', 'Ссылка ресурса выходит за каталог скилла') from None
+                resource, why = safe_read(skill, path)
+                if why:
+                    raise Failure('invalid_resource', f'Недоступный ресурс скилла: {path} ({why})')
+        except UnicodeDecodeError:
+            errors.append({'skill': skill.name, 'error': 'invalid_utf8', 'message': 'SKILL.md должен быть UTF-8'})
+        except Failure as error:
+            errors.append({'skill': skill.name, 'error': error.code, 'message': str(error)})
+    if not found and not errors:
+        errors.append({'error': 'no_skills', 'message': 'Не найдено ни одного каталога со SKILL.md'})
+    return {'schema_version': 1, 'valid': not errors, 'skills': found,
+            'errors': errors, 'warnings': warnings,
+            'limits': ['Checks metadata and local Markdown links only; not proof of agent behavior. No model/API calls.']}
+
+
+def report(args):
+    source = Path(args.input).expanduser().resolve()
+    if secret(source.as_posix()) or not source.is_file() or source.stat().st_size > MAX_BYTES:
+        raise Failure('invalid_report', 'Нужен JSON-отчёт размером до 1 МиБ')
+    try:
+        value = json.loads(source.read_text())
+    except (ValueError, UnicodeDecodeError):
+        raise Failure('invalid_report', 'Отчёт должен быть корректным UTF-8 JSON') from None
+    if not isinstance(value, dict) or set(value) - {'skill', 'status', 'findings', 'checks', 'coverage_gaps', 'summary', 'snapshot'}:
+        raise Failure('invalid_report', 'Неизвестные поля отчёта')
+    if not re.fullmatch(r'[a-z0-9][a-z0-9-]{0,63}', str(value.get('skill', ''))) or value.get('status') not in ('pass', 'issues', 'blocked', 'partial'):
+        raise Failure('invalid_report', 'Нужны skill и status pass|issues|blocked|partial')
+    findings, checked, gaps = (value.get(field, []) for field in ('findings', 'checks', 'coverage_gaps'))
+    if not all(isinstance(rows, list) for rows in (findings, checked, gaps)) or len(findings) + len(checked) + len(gaps) > 2000:
+        raise Failure('invalid_report', 'Списки отчёта некорректны или слишком велики')
+    for finding in findings:
+        if not isinstance(finding, dict) or finding.get('severity') not in ('P0', 'P1', 'P2', 'P3') or type(finding.get('line')) is not int or finding['line'] < 1 or not isinstance(finding.get('message'), str) or not finding['message'].strip() or not isinstance(finding.get('path'), str):
+            raise Failure('invalid_report', 'Находке нужны severity, path, line и message')
+        relative(finding.get('path', ''))
+    for check in checked:
+        if not isinstance(check, dict) or check.get('result') not in ('pass', 'fail', 'not_run', 'blocked') or not isinstance(check.get('argv'), list) or not check['argv'] or not all(isinstance(arg, str) for arg in check['argv']) or type(check.get('required', True)) is not bool:
+            raise Failure('invalid_report', 'Проверке нужны argv и result pass|fail|not_run|blocked')
+        code = check.get('exit_code')
+        if (check['result'] == 'pass' and (type(code) is not int or code != 0)) or (check['result'] == 'fail' and (type(code) is not int or code == 0)) or (check['result'] in ('not_run', 'blocked') and code is not None):
+            raise Failure('contradictory_report', 'Результат проверки противоречит её exit_code')
+    if not all(isinstance(gap, str) and gap.strip() for gap in gaps):
+        raise Failure('invalid_report', 'coverage_gaps должен быть списком непустых строк')
+    if value['status'] == 'pass' and (findings or gaps or any(check['result'] != 'pass' and check.get('required', True) for check in checked)):
+        raise Failure('contradictory_report', 'Нельзя объявить pass при находках или незавершённых обязательных проверках')
+    captured = snapshot(args.root, args.base)
+    if value.get('snapshot') and value['snapshot'] != captured['snapshot']:
+        raise Failure('stale_snapshot', 'Отчёт относится к другому состоянию рабочего дерева')
+    return {'schema_version': 1, **value, 'findings': findings, 'checks': checked,
+            'coverage_gaps': gaps, 'snapshot': captured['snapshot'], 'root': captured['root'], 'base': captured['base'],
+            'assessment_kind': 'caller_reported',
+            'limits': ['Schema/snapshot validation does not prove the model read files or ran caller-reported commands. Nothing is published or written.']}
+
+
+def install(args):
+    project, skills = directory(args.project), directory(args.skills)
+    if skills == project or project in skills.parents:
+        raise Failure('invalid_install_root', 'Запускайте link из проекта вне каталога пакета skills')
+    validation = validate(skills)
+    if not validation['valid']:
+        raise Failure('invalid_skills', 'Пакет не прошёл validate; link не выполнен')
+    if not re.fullmatch(r'[a-z0-9][a-z0-9_-]*', args.name):
+        raise Failure('invalid_label', 'Недопустимая метка набора')
+    executable = shutil.which(args.rcode) if not os.path.isabs(args.rcode) else args.rcode
+    if not executable or not Path(executable).is_file():
+        raise Failure('executable_unavailable', 'rcode не найден; укажите --rcode')
+    argv = [executable, '-C', str(project), 'skills', 'link', '--name', args.name, str(skills)]
+    result = {'schema_version': 1, 'argv': argv, 'executed': False}
+    if args.execute:
+        code, stdout, _stderr, _ = execute(argv, cwd=project, install=True)
+        result.update(executed=True, exit_code=code, output=stdout.decode('utf-8', 'replace'))
+        if code:
+            raise Failure('install_failed', 'rcode skills link отказал; существующий набор не заменялся')
+    return result
+
+
+def parser():
+    result = argparse.ArgumentParser(description='rstack: локальные помощники для rcode (без API и публикаций)')
+    result.add_argument('--version', action='version', version='rstack ' + VERSION)
+    sub = result.add_subparsers(dest='command', required=True)
+    for name in ('doctor', 'context', 'diff', 'checks', 'report'):
+        command = sub.add_parser(name)
+        command.add_argument('--root', default='.')
+        if name in ('context', 'diff', 'report'):
+            command.add_argument('--base')
+        if name == 'diff':
+            command.add_argument('--path')
+            command.add_argument('--max-bytes', type=int, default=24000)
+        if name == 'report':
+            command.add_argument('--input', required=True)
+            command.add_argument('--format', choices=('json', 'markdown'), default='json')
+    command = sub.add_parser('validate')
+    command.add_argument('--skills', required=True)
+    command = sub.add_parser('install')
+    command.add_argument('--rcode', default='rcode')
+    command.add_argument('--project', required=True)
+    command.add_argument('--skills', default=str(Path(__file__).resolve().parents[1] / 'skills'))
+    command.add_argument('--name', default='rstack')
+    command.add_argument('--execute', action='store_true', help='Выполнить показанный link; без флага только preview')
+    return result
+
+
+def main():
+    try:
+        args = parser().parse_args()
+        if args.command == 'doctor':
+            result = doctor(args.root)
+        elif args.command == 'context':
+            result = snapshot(args.root, args.base)
+        elif args.command == 'diff':
+            if not 256 <= args.max_bytes <= MAX_BYTES:
+                raise Failure('invalid_limit', '--max-bytes должен быть от 256 до 1048576')
+            result = diff(args)
+        elif args.command == 'checks':
+            result = checks(args.root)
+        elif args.command == 'report':
+            result = report(args)
+        elif args.command == 'validate':
+            result = validate(args.skills)
+        else:
+            result = install(args)
+        if args.command == 'report' and args.format == 'markdown':
+            print(f'# rstack {result["skill"]}: {result["status"]}\n\nОценка предоставлена вызывающей стороной. Снимок: `{result["snapshot"]}`.\n')
+            for finding in result['findings']:
+                print(f'- {finding["severity"]} {finding["path"]}:{finding["line"]}: {finding["message"]}')
+            for gap in result['coverage_gaps']:
+                print(f'- Непроверено: {gap}')
+        else:
+            print(json.dumps(result, ensure_ascii=True, indent=2))
+        return 2 if args.command == 'validate' and not result['valid'] else 0
+    except Failure as error:
+        print(json.dumps({'error': error.code, 'message': str(error)}, ensure_ascii=True))
+        return 2
+    except (OSError, ValueError) as error:
+        print(json.dumps({'error': 'io_error', 'message': type(error).__name__}))
+        return 2
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())

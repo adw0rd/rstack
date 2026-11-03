@@ -1,0 +1,1306 @@
+{
+  "source_repo": "https://github.com/garrytan/gstack",
+  "source_commit": "219f7488",
+  "source_version": "1.91.292",
+  "license": "MIT",
+  "groups": {
+    "planning": [
+      "office-hours",
+      "spec",
+      "autoplan",
+      "plan-ceo-review",
+      "plan-eng-review",
+      "plan-design-review",
+      "plan-devex-review",
+      "plan-tune",
+      "design-consultation"
+    ],
+    "code-quality": [
+      "review",
+      "investigate",
+      "qa",
+      "qa-only",
+      "cso",
+      "health",
+      "devex-review",
+      "deslop-shared-libs",
+      "test-audit",
+      "benchmark"
+    ],
+    "release-docs": [
+      "ship",
+      "land-and-deploy",
+      "modernize",
+      "landing-report",
+      "setup-deploy",
+      "document-release",
+      "document-generate",
+      "gstack-upgrade"
+    ],
+    "memory": [
+      "context-save",
+      "context-restore",
+      "learn",
+      "retro",
+      "setup-gbrain",
+      "sync-gbrain"
+    ],
+    "design-media": [
+      "design-html",
+      "design-motion",
+      "design-review",
+      "design-shotgun",
+      "diagram",
+      "make-pdf"
+    ],
+    "browser": [
+      "browse",
+      "open-gstack-browser",
+      "setup-browser-cookies",
+      "pair-agent",
+      "scrape",
+      "skillify",
+      "canary"
+    ],
+    "ios": [
+      "ios-qa",
+      "ios-fix",
+      "ios-design-review",
+      "ios-clean",
+      "ios-sync"
+    ],
+    "safety": [
+      "careful",
+      "freeze",
+      "guard",
+      "unfreeze"
+    ],
+    "external-runtimes": [
+      "benchmark-models",
+      "codex",
+      "eval-plan",
+      "ubicloud"
+    ],
+    "skill-authoring": [
+      "write-skill"
+    ],
+    "orchestration": [
+      "captain"
+    ]
+  },
+  "skills": [
+    {
+      "skill": "office-hours",
+      "family": "planning",
+      "source": "office-hours/SKILL.md",
+      "bytes": 43885,
+      "lines": 683,
+      "sha256": "be22741d249b6d52c319ed169ea67248dcaab0c577dfe07b44a022eb462c01b7",
+      "adaptation": "generated",
+      "runtime_family": "planning",
+      "upstream_stage_index": [
+        "Phase 1: Context Gathering",
+        "Phase 2A: Startup Mode — YC Product Diagnostic",
+        "Phase 2B: Builder Mode — Design Partner",
+        "Phase 2.5: Related Design Discovery",
+        "Phase 2.75: Landscape Awareness",
+        "Phase 3: Premise Challenge",
+        "Phase 3.5: Cross-Model Second Opinion (optional)",
+        "Phase 4: Alternatives Generation",
+        "Phase 4.25: Visual design (UI ideas only)",
+        "Phase 4.5: Founder Signal Synthesis",
+        "Section self-check (before you finish)",
+        "Capture Learnings"
+      ]
+    },
+    {
+      "skill": "spec",
+      "family": "planning",
+      "source": "spec/SKILL.md",
+      "bytes": 34965,
+      "lines": 646,
+      "sha256": "5df8c5e820729eca80266e4ca84966bf8d1e53dc6d8c6f00c935e764f7b83625",
+      "adaptation": "generated",
+      "runtime_family": "planning",
+      "upstream_stage_index": [
+        "Process (STRICT — do not skip or combine phases)",
+        "Phase 1: Understand the \"Why\" (+ optional --dedupe)",
+        "Phase 2: Scope and Boundaries",
+        "Phase 3: Technical Interrogation (read code first)",
+        "Phase 4: Draft Review",
+        "Phases 4.5 and 5: Quality Gate, then File the Spec (sequencing summary)",
+        "8. Schema, API Shapes, and Data Models",
+        "10. Testable Acceptance Criteria",
+        "11. Testing Pyramid",
+        "Audit / Cleanup Issues (routed via `--audit` flag)",
+        "Section self-check (before you finish)"
+      ]
+    },
+    {
+      "skill": "autoplan",
+      "family": "planning",
+      "source": "autoplan/SKILL.md",
+      "bytes": 43203,
+      "lines": 728,
+      "sha256": "c3148676e5fc378bd6b10a54c9227b0c4ed94732bee9ae6d4e2eb78b4a045d1e",
+      "adaptation": "generated",
+      "runtime_family": "planning",
+      "upstream_stage_index": [
+        "Step 0: Detect platform and base branch",
+        "Design Doc Check",
+        "Prerequisite Skill Offer",
+        "/autoplan — Auto-Review Pipeline",
+        "Phase 0: Intake + Restore Point",
+        "Step 1: Capture restore point",
+        "Step 2: Read context",
+        "Step 3: Locate review skills; load each at phase entry",
+        "Phase 0.5: Outside reviewer preflight",
+        "Phase 1: CEO Review (Strategy & Scope)",
+        "Phase 2: Design Review (conditional — skip if no UI scope)",
+        "Phase 2.5: DX Review (conditional — skip if no developer-facing scope)",
+        "Phase 4: Final Approval Gate",
+        "Completion: Write Review Logs"
+      ]
+    },
+    {
+      "skill": "plan-ceo-review",
+      "family": "planning",
+      "source": "plan-ceo-review/SKILL.md",
+      "bytes": 60379,
+      "lines": 1044,
+      "sha256": "f904bc2c847b085e19615fdcdc85f036162e338a60240ccdee616c7dfab075d9",
+      "adaptation": "generated",
+      "runtime_family": "planning",
+      "upstream_stage_index": [
+        "Self-check before emitting",
+        "Step 0: Detect platform and base branch",
+        "Mega Plan Review Mode",
+        "PRE-REVIEW SYSTEM AUDIT (before Step 0)",
+        "Prerequisite Skill Offer",
+        "Retrospective Check",
+        "Frontend/UI Scope Detection",
+        "Taste Calibration (EXPANSION and SELECTIVE EXPANSION modes)",
+        "Landscape Check",
+        "Step 0: Nuclear Scope Challenge + Mode Selection",
+        "0E. Mode Selection",
+        "0F. Expansion Framing (shared by EXPANSION and SELECTIVE EXPANSION)",
+        "0G. Mode-Specific Analysis",
+        "0H. Persist CEO Plan (EXPANSION and SELECTIVE EXPANSION only)",
+        "Spec Review Loop",
+        "0I. Temporal Interrogation (EXPANSION, SELECTIVE EXPANSION, and HOLD modes)",
+        "Continue after Step 0 (all modes)",
+        "Section self-check (before you finish)"
+      ]
+    },
+    {
+      "skill": "plan-eng-review",
+      "family": "planning",
+      "source": "plan-eng-review/SKILL.md",
+      "bytes": 43509,
+      "lines": 573,
+      "sha256": "45013d684e82a92c65906eb40cf24084faf8c45cd403918d80e2a5764f226559",
+      "adaptation": "generated",
+      "runtime_family": "planning",
+      "upstream_stage_index": [
+        "Plan Review Mode",
+        "Scope gate (FIRST — overrides everything below). This is a hard STOP.",
+        "Self-check before emitting",
+        "Design Doc Check",
+        "Prerequisite Skill Offer",
+        "Engineering review",
+        "Step 0: Scope Challenge",
+        "Section self-check (before you finish)"
+      ]
+    },
+    {
+      "skill": "plan-design-review",
+      "family": "planning",
+      "source": "plan-design-review/SKILL.md",
+      "bytes": 56209,
+      "lines": 874,
+      "sha256": "fc2ff2246d4c38ceb6886aa2165c49a54097d59041a34d7e5c668007a8b86d72",
+      "adaptation": "generated",
+      "runtime_family": "planning",
+      "upstream_stage_index": [
+        "/plan-design-review: Designer's Eye Plan Review",
+        "Scope gate (FIRST — overrides everything below). This is a hard STOP.",
+        "Self-check before emitting",
+        "Step 0: Detect platform and base branch",
+        "PRE-REVIEW SYSTEM AUDIT (before Step 0)",
+        "Retrospective Check",
+        "UI Scope Detection",
+        "DESIGN SETUP (run this check BEFORE any design mockup command)",
+        "Step 0: Design Scope Assessment",
+        "Step 0.5: Visual Mockups (DEFAULT when DESIGN_READY)",
+        "Section self-check (before you finish)"
+      ]
+    },
+    {
+      "skill": "plan-devex-review",
+      "family": "planning",
+      "source": "plan-devex-review/SKILL.md",
+      "bytes": 46747,
+      "lines": 840,
+      "sha256": "d7cd41a6d7d4c62b2939d28a25851832d0b63d00db31b44586ee2e98f375616a",
+      "adaptation": "generated",
+      "runtime_family": "planning",
+      "upstream_stage_index": [
+        "Self-check before emitting",
+        "Step 0: Detect platform and base branch",
+        "/plan-devex-review: Developer Experience Plan Review",
+        "PRE-REVIEW SYSTEM AUDIT (before Step 0)",
+        "Step 0: DX Investigation (before scoring)",
+        "Prerequisite Skill Offer",
+        "Step 0 continued",
+        "0E. Mode Selection",
+        "Section self-check (before you finish)"
+      ]
+    },
+    {
+      "skill": "plan-tune",
+      "family": "planning",
+      "source": "plan-tune/SKILL.md",
+      "bytes": 35267,
+      "lines": 748,
+      "sha256": "1253cff421ae1483ff44261d1dbeecbd4684f70991ea9127848e7ccb64540f67",
+      "adaptation": "generated",
+      "runtime_family": "planning",
+      "upstream_stage_index": [
+        "Step 0: Detect what the user wants",
+        "Dream cycle review"
+      ]
+    },
+    {
+      "skill": "design-consultation",
+      "family": "planning",
+      "source": "design-consultation/SKILL.md",
+      "bytes": 40236,
+      "lines": 570,
+      "sha256": "5cb22baa309b8a2d363c6e3fe97d54ab1db71af9e318b6e8435b8ec407dd0505",
+      "adaptation": "generated",
+      "runtime_family": "planning",
+      "upstream_stage_index": [
+        "Phase 0: Pre-checks",
+        "BROWSER SETUP (Aside — run this check BEFORE any browser step)",
+        "DESIGN SETUP (run this check BEFORE any design mockup command)",
+        "Phase 1: Product Context",
+        "Phase 2: Research (only if user said yes)",
+        "Capture Learnings"
+      ]
+    },
+    {
+      "skill": "review",
+      "family": "code-quality",
+      "source": "review/SKILL.md",
+      "bytes": 58912,
+      "lines": 956,
+      "sha256": "a2db0aabd08e6fa18e1d8b562de8b9c876a3e06fefe96f3550a402cf1ed0e787",
+      "adaptation": "core",
+      "runtime_family": "review",
+      "upstream_stage_index": [
+        "Step 0: Detect platform and base branch",
+        "Pre-Landing PR Review",
+        "Step 1: Check branch",
+        "Step 1.5: Scope Drift Detection",
+        "Step 2: Read the checklist",
+        "Step 2.5: Check for Greptile review comments",
+        "Step 3: Get the diff",
+        "Step 3.4: Workspace-aware queue status (advisory)",
+        "Step 3.5: Diff scans",
+        "Step 3.6: Gather review context",
+        "Step 4: Critical pass (core review)",
+        "Documentation staleness check",
+        "Step 4.7: Exploratory QA (before Fix-First)",
+        "Step 5: Fix-First Review",
+        "Step 5.0: Cross-review finding dedup",
+        "Step 5a: Classify each finding",
+        "Step 5b: Auto-fix all AUTO-FIX items",
+        "Step 5c: Batch-ask about ASK items"
+      ]
+    },
+    {
+      "skill": "investigate",
+      "family": "code-quality",
+      "source": "investigate/SKILL.md",
+      "bytes": 29833,
+      "lines": 502,
+      "sha256": "1431cc5b62f8ce4ccccc2e0a2883c34910a4237e18b749c78d7259fe91e5f1c8",
+      "adaptation": "core",
+      "runtime_family": "debug",
+      "upstream_stage_index": [
+        "Phase 1: Root Cause Investigation",
+        "Scope Lock",
+        "Phase 2: Pattern Analysis",
+        "Phase 3: Hypothesis Testing",
+        "Phase 4: Implementation",
+        "Phase 5: Verification & Report",
+        "Capture Learnings"
+      ]
+    },
+    {
+      "skill": "qa",
+      "family": "code-quality",
+      "source": "qa/SKILL.md",
+      "bytes": 29254,
+      "lines": 530,
+      "sha256": "c7a664008384369c21ea157a77ad7888f4a506ff4685ba242cba2ad56e980dca",
+      "adaptation": "core",
+      "runtime_family": "qa",
+      "upstream_stage_index": [
+        "Step 0: Detect platform and base branch",
+        "/qa: Test → Fix → Verify",
+        "Test Plan Context",
+        "Phases 1-6: QA Baseline",
+        "Output Structure",
+        "Phase 7: Triage",
+        "Phase 8: Fix Loop",
+        "8a.5. Regression test before repair",
+        "8c. Re-test",
+        "8e.5. Regression Test record",
+        "Phase 9: Final QA",
+        "Phase 10: Report",
+        "Phase 11: TODOS.md Update",
+        "Capture Learnings"
+      ]
+    },
+    {
+      "skill": "qa-only",
+      "family": "code-quality",
+      "source": "qa-only/SKILL.md",
+      "bytes": 21913,
+      "lines": 342,
+      "sha256": "fd8b7b36c5aeed4fb425134ae2c3ca93c3fee5f183f7e7d5b382711780313646",
+      "adaptation": "generated",
+      "runtime_family": "qa",
+      "upstream_stage_index": [
+        "/qa-only: Report-Only QA Testing",
+        "Test Plan Context",
+        "Select Surfaces and Isolation",
+        "Run the Selected Checks",
+        "Output",
+        "Assemble the report",
+        "Write the checked report",
+        "Output Structure"
+      ]
+    },
+    {
+      "skill": "cso",
+      "family": "code-quality",
+      "source": "cso/SKILL.md",
+      "bytes": 18761,
+      "lines": 168,
+      "sha256": "ebf891082d3384579d9099950a87eb84896263e8f9a0705779b6aecf9d3201d1",
+      "adaptation": "generated",
+      "runtime_family": "review",
+      "upstream_stage_index": [
+        "Mode Resolution",
+        "Phase 0: Application model and readiness",
+        "Phase 1: Attack surface census",
+        "Phase 12: Evidence rubric and independent challenge",
+        "Phase 14: Recovery and current-source rechecks"
+      ]
+    },
+    {
+      "skill": "health",
+      "family": "code-quality",
+      "source": "health/SKILL.md",
+      "bytes": 22257,
+      "lines": 473,
+      "sha256": "dc18a0ae204f2c80e3d61f07bc202ec60acef3697b8cd4394c8145965884e19c",
+      "adaptation": "generated",
+      "runtime_family": "review",
+      "upstream_stage_index": [
+        "Step 1: Detect Health Stack",
+        "Step 2: Run Tools",
+        "Step 3: Score Each Category",
+        "Step 4: Present Dashboard",
+        "Step 5: Persist to Health History",
+        "Step 6: Trend Analysis + Recommendations"
+      ]
+    },
+    {
+      "skill": "devex-review",
+      "family": "code-quality",
+      "source": "devex-review/SKILL.md",
+      "bytes": 58567,
+      "lines": 901,
+      "sha256": "f6d76dd395b8f055d38025bd9bb0c4d082f77a70baf59b384016f01930444e7f",
+      "adaptation": "generated",
+      "runtime_family": "qa",
+      "upstream_stage_index": [
+        "Step 0: Detect platform and base branch",
+        "BROWSER SETUP (Aside — run this check BEFORE any browser step)",
+        "Translate the Aside scripts step by step",
+        "/devex-review: Live Developer Experience Audit",
+        "Scope Declaration",
+        "Step 0: Target Discovery",
+        "Boomerang Baseline",
+        "Step 1: Getting Started Audit",
+        "Step 2: API/CLI/SDK Ergonomics Audit",
+        "Step 3: Error Message Audit (agent-ready)",
+        "Step 4: Documentation Audit",
+        "Step 5: Upgrade Path Audit",
+        "Step 6: Developer Environment Audit",
+        "Step 7: Community & Ecosystem Audit",
+        "Step 8: DX Measurement Audit",
+        "Review Log",
+        "Review Readiness Dashboard",
+        "Plan File Review Report"
+      ]
+    },
+    {
+      "skill": "deslop-shared-libs",
+      "family": "code-quality",
+      "source": "deslop-shared-libs/SKILL.md",
+      "bytes": 13051,
+      "lines": 207,
+      "sha256": "13298bd1becd17b16b859775fad952754c3e870f4c0f44a2f39d05cd70af30b4",
+      "adaptation": "generated",
+      "runtime_family": "review",
+      "upstream_stage_index": [
+        "Scope and read-only boundary",
+        "Establish the reviewed source",
+        "Check work already underway",
+        "Output"
+      ]
+    },
+    {
+      "skill": "test-audit",
+      "family": "code-quality",
+      "source": "test-audit/SKILL.md",
+      "bytes": 17686,
+      "lines": 255,
+      "sha256": "4900f67748f471480439781f7626f1dd449d5ccfc4a52e9ef1157a781039f9db",
+      "adaptation": "generated",
+      "runtime_family": "review",
+      "upstream_stage_index": [
+        "/test-audit: Test value sweep",
+        "Step 1: Scope and seeds",
+        "Step 2: Mechanical pre-filter",
+        "Step 3: Evidence",
+        "Step 4: Report and sidecar",
+        "Step 6: Apply an approved batch"
+      ]
+    },
+    {
+      "skill": "benchmark",
+      "family": "code-quality",
+      "source": "benchmark/SKILL.md",
+      "bytes": 31290,
+      "lines": 468,
+      "sha256": "15ac49f4a6b948fac2c9af6b5cda9f688ddc1f2ca7d77143c0e3cf36ffcd5026",
+      "adaptation": "generated",
+      "runtime_family": "qa",
+      "upstream_stage_index": [
+        "Plan Mode Safe Operations",
+        "BROWSER SETUP (Aside — run this check BEFORE any browser step)",
+        "Translate the Aside scripts step by step",
+        "Phase 1: Setup",
+        "Phase 2: Page Discovery",
+        "Phase 3: Performance Data Collection",
+        "Phase 4: Baseline Capture (--baseline mode)",
+        "Phase 5: Comparison",
+        "Phase 6: Slowest Resources",
+        "Phase 7: Performance Budget",
+        "Phase 8: Trend Analysis (--trend mode)",
+        "Phase 9: Save Report"
+      ]
+    },
+    {
+      "skill": "ship",
+      "family": "release-docs",
+      "source": "ship/SKILL.md",
+      "bytes": 60959,
+      "lines": 1005,
+      "sha256": "ce360870f69502c524a028958c75c30dac989ba2789b0dbbe48a5e0d13c5a0ea",
+      "adaptation": "generated",
+      "runtime_family": "release",
+      "upstream_stage_index": [
+        "Ship: Fully Automated Ship Workflow",
+        "Keep state between steps",
+        "Step 0: Detect platform and base branch",
+        "Step 0.9: Apple target detection",
+        "Step 1: Pre-flight",
+        "Review Readiness Dashboard",
+        "Step 2: Distribution Pipeline Check",
+        "Step 3: Merge the base branch (BEFORE tests)",
+        "Step 11.5: Bind the reviews",
+        "Step 12: Version bump (auto-decide)",
+        "Step 14: TODOS.md (auto-update)",
+        "Step 14.5: Documentation audit (every ship)",
+        "Step 15: Commit (bisectable chunks)",
+        "Step 16: Verification Gate",
+        "1. Finish writers and prepare outputs",
+        "5. Report, then push",
+        "Step 17: Push",
+        "Step 18: Prepare publication metadata"
+      ]
+    },
+    {
+      "skill": "land-and-deploy",
+      "family": "release-docs",
+      "source": "land-and-deploy/SKILL.md",
+      "bytes": 51992,
+      "lines": 789,
+      "sha256": "224077c3b976ceea0046929dbc0c6c61ba591380ed3c7547262edbac148a51b8",
+      "adaptation": "generated",
+      "runtime_family": "release",
+      "upstream_stage_index": [
+        "BROWSER SETUP (Aside — run this check BEFORE any browser step)",
+        "Translate the Aside scripts step by step",
+        "Step 0: Detect platform and base branch",
+        "Step 1: Pre-flight",
+        "Step 1.5: First-run dry-run validation",
+        "Step 2: Pre-merge checks",
+        "Step 3: Wait for CI (if pending)",
+        "Step 3.4: VERSION drift detection (workspace-aware ship)",
+        "Step 6: Wait for deploy (if applicable)",
+        "Strategy A: GitHub Actions workflow",
+        "Common: Timing and failure handling",
+        "Step 7: Canary verification (conditional depth)",
+        "Step 8: Revert (if needed)",
+        "Step 9: Deploy report",
+        "Step 10: Suggest follow-ups",
+        "Section self-check (before you finish)"
+      ]
+    },
+    {
+      "skill": "modernize",
+      "family": "release-docs",
+      "source": "modernize/SKILL.md",
+      "bytes": 14436,
+      "lines": 239,
+      "sha256": "e410389ac99242c47d36fd7d82880192ecb64c3a9ae779bb760b55158dc0d82c",
+      "adaptation": "generated",
+      "runtime_family": "release",
+      "upstream_stage_index": [
+        "/modernize — Is this PR still worth landing?",
+        "Step 1: Read the PR as a claim",
+        "Step 2: What moved under it",
+        "Step 3: The disposition",
+        "Step 4 (MODERNIZE only): Rebase and prove intent survived",
+        "Step 5 (MODERNIZE only): Push with a lease pinned to what you saw",
+        "Step 6: Report"
+      ]
+    },
+    {
+      "skill": "landing-report",
+      "family": "release-docs",
+      "source": "landing-report/SKILL.md",
+      "bytes": 12510,
+      "lines": 238,
+      "sha256": "89f4283546f58ea5b52ff0eb9b50c146727b619fc9b9b0d7f2c7f45a3c6e36d7",
+      "adaptation": "generated",
+      "runtime_family": "release",
+      "upstream_stage_index": [
+        "/landing-report — Version Queue Dashboard",
+        "Step 1: Detect platform and base branch",
+        "Step 2: Read current state",
+        "Step 3: Query the queue",
+        "Step 4: Render the dashboard",
+        "Step 5: Suggest next action",
+        "Plan Mode"
+      ]
+    },
+    {
+      "skill": "setup-deploy",
+      "family": "release-docs",
+      "source": "setup-deploy/SKILL.md",
+      "bytes": 21960,
+      "lines": 355,
+      "sha256": "aefb84d754d8ccc19f1ee6b298b6e99e329af676c963f5847f80794209f05140",
+      "adaptation": "generated",
+      "runtime_family": "release",
+      "upstream_stage_index": [
+        "Step 1: Check existing configuration",
+        "Step 2: Detect platform",
+        "Step 3: Platform-specific setup",
+        "Step 4: Write configuration",
+        "Step 5: Verify",
+        "Step 6: Summary"
+      ]
+    },
+    {
+      "skill": "document-release",
+      "family": "release-docs",
+      "source": "document-release/SKILL.md",
+      "bytes": 17046,
+      "lines": 309,
+      "sha256": "fe48173c3c6e8e1e97f575e2d842e74817d885b1a828b6b0a1f9e6e605fd084c",
+      "adaptation": "generated",
+      "runtime_family": "docs",
+      "upstream_stage_index": [
+        "Step 0: Detect platform and base branch",
+        "Ship-owned documentation mode",
+        "Step 1: Pre-flight & Diff Analysis",
+        "Step 1.5: Coverage Map (Blast-Radius Analysis)"
+      ]
+    },
+    {
+      "skill": "document-generate",
+      "family": "release-docs",
+      "source": "document-generate/SKILL.md",
+      "bytes": 23010,
+      "lines": 569,
+      "sha256": "4fdf8ad11cadfe955bde27ef9fffa333db57a5188e7728ef086a62f7c36a5f6b",
+      "adaptation": "generated",
+      "runtime_family": "docs",
+      "upstream_stage_index": [
+        "Step 0: Detect platform and base branch",
+        "Step 0: Scope & Intent",
+        "Step 1: Codebase Archaeology (Research Phase)",
+        "Step 2: Diataxis Partitioning",
+        "Step 3: Write Reference Documentation First",
+        "Step 4: Write Explanation Documentation",
+        "Step 5: Write How-To Guides",
+        "Step 6: Write Tutorials",
+        "Step 7: Cross-Document Linking & Discoverability",
+        "Step 8: Quality Self-Review",
+        "Step 9: Commit & Output"
+      ]
+    },
+    {
+      "skill": "gstack-upgrade",
+      "family": "release-docs",
+      "source": "gstack-upgrade/SKILL.md",
+      "bytes": 24106,
+      "lines": 419,
+      "sha256": "a2c7925b29b5cd659c8c208272aa7f60298ae0d77a37baffe9cb9aa1a9c97c32",
+      "adaptation": "generated",
+      "runtime_family": "release",
+      "upstream_stage_index": [
+        "Step 1: Ask the user (or auto-upgrade)",
+        "Step 2: Detect install type",
+        "Step 3: Save old version",
+        "Step 4: Upgrade",
+        "Step 4.5: Handle local vendored copy",
+        "Step 4.75: Run version migrations",
+        "Step 4.8: Stop any stale daemon (unconditional)",
+        "Step 5: Write marker + clear cache",
+        "Step 6: Show What's New",
+        "Step 7: Continue"
+      ]
+    },
+    {
+      "skill": "context-save",
+      "family": "memory",
+      "source": "context-save/SKILL.md",
+      "bytes": 19521,
+      "lines": 399,
+      "sha256": "8c9a48775c1dc0a2c6be3b2bc74e6d70b795019c8fb1852e877bfb2a3315fc7a",
+      "adaptation": "generated",
+      "runtime_family": "context",
+      "upstream_stage_index": [
+        "Step 1: Gather state",
+        "Step 2: Summarize context",
+        "Step 4: Write saved-context file",
+        "Step 1: Gather saved contexts",
+        "Step 2: Display table"
+      ]
+    },
+    {
+      "skill": "context-restore",
+      "family": "memory",
+      "source": "context-restore/SKILL.md",
+      "bytes": 24062,
+      "lines": 430,
+      "sha256": "c25a8b2b045f968ebaa53b8b9bfcdaf847a1d3f4c612559aec8d7ea312732e26",
+      "adaptation": "generated",
+      "runtime_family": "context",
+      "upstream_stage_index": [
+        "Step 1: Find saved contexts",
+        "Step 2: Load the right file",
+        "Step 3: Offer next steps"
+      ]
+    },
+    {
+      "skill": "learn",
+      "family": "memory",
+      "source": "learn/SKILL.md",
+      "bytes": 8375,
+      "lines": 130,
+      "sha256": "9505712de5ea85c2d3ee6602374a852fe2bdb0119ef63cc345d8a8e1bef3b80a",
+      "adaptation": "generated",
+      "runtime_family": "context",
+      "upstream_stage_index": []
+    },
+    {
+      "skill": "retro",
+      "family": "memory",
+      "source": "retro/SKILL.md",
+      "bytes": 51604,
+      "lines": 959,
+      "sha256": "21b84152f66cb916113d3fe25d81b12849bd559e4ab9d639ab0f89b75305addd",
+      "adaptation": "generated",
+      "runtime_family": "context",
+      "upstream_stage_index": [
+        "Step 0: Detect platform and base branch",
+        "Step 0.5: Freshness pre-flight (fetch)",
+        "Step 1: Gather Metrics (one command)",
+        "Step 2: Compute Metrics",
+        "Step 3: Commit Time Distribution",
+        "Step 5: Commit Type Breakdown",
+        "Step 6: Hotspot Analysis",
+        "Step 7: PR Size Distribution",
+        "Step 7.5: Factory scorecard (optional)",
+        "Step 8: Focus Score + Ship of the Week",
+        "Step 9: Team Member Analysis",
+        "Step 10: Week-over-Week Trends (if window >= 14d)",
+        "Step 11: Streak Tracking",
+        "Step 11.5: Shortcut Debt Ledger",
+        "Step 12: Load History & Compare",
+        "Step 13: Save Retro History",
+        "Step 14: Write the Narrative",
+        "Capture Learnings"
+      ]
+    },
+    {
+      "skill": "setup-gbrain",
+      "family": "memory",
+      "source": "setup-gbrain/SKILL.md",
+      "bytes": 38306,
+      "lines": 829,
+      "sha256": "93a7a9a5f35eaf847688dd9740cbfbc24ef1e5c66109464a5e7eacbd51e1b83d",
+      "adaptation": "generated",
+      "runtime_family": "context",
+      "upstream_stage_index": [
+        "Step 1: Detect current state",
+        "Step 1.5: Broken-local-engine remediation",
+        "Step 1.7: Code-intelligence provider choice (Step 0 of indexing)",
+        "Step 6: Per-remote policy (gated repo-import)",
+        "Step 7.5: Transcript ingest consent",
+        "Step 9: Smoke test",
+        "Step 10: GREEN/YELLOW/RED verdict block (idempotent doctor output)"
+      ]
+    },
+    {
+      "skill": "sync-gbrain",
+      "family": "memory",
+      "source": "sync-gbrain/SKILL.md",
+      "bytes": 37312,
+      "lines": 687,
+      "sha256": "8078599f91810c0c4203802afdd0a4d8de57ce47d20fac0789bc5a2e02a8d870",
+      "adaptation": "generated",
+      "runtime_family": "context",
+      "upstream_stage_index": [
+        "Step 1: State probe",
+        "Step 1.5: Local engine pre-flight",
+        "Step 1.6: Transcript consent",
+        "Step 2: Run the orchestrator",
+        "Step 3: Code-index health check",
+        "Step 3.5: Call-graph health check (offer `--dream`)",
+        "Step 5: Verdict block (idempotent doctor output)",
+        "Status reporting"
+      ]
+    },
+    {
+      "skill": "design-html",
+      "family": "design-media",
+      "source": "design-html/SKILL.md",
+      "bytes": 34044,
+      "lines": 622,
+      "sha256": "8b5897fd6e263addd51c90e76cc15a2915606bc63b9cd9434b5de34e1a3ca8db",
+      "adaptation": "generated",
+      "runtime_family": "design",
+      "upstream_stage_index": [
+        "DESIGN SETUP (run this check BEFORE any design mockup command)",
+        "Step 0: Input Detection",
+        "Step 1: Design Analysis",
+        "Step 2: Smart Pretext API Routing",
+        "Step 2.5: Framework Detection",
+        "Step 3: Generate Pretext-Native HTML",
+        "Step 3.5: Live Reload Server",
+        "Step 4: Preview + Refinement Loop",
+        "Step 5: Save & Next Steps",
+        "Next Steps"
+      ]
+    },
+    {
+      "skill": "design-motion",
+      "family": "design-media",
+      "source": "design-motion/SKILL.md",
+      "bytes": 18080,
+      "lines": 257,
+      "sha256": "d56b42c14108f00e2455ef4f2e4e1967d49d8e8bfc29e69cd1d1b052be611f84",
+      "adaptation": "generated",
+      "runtime_family": "design",
+      "upstream_stage_index": [
+        "Step 0: Setup and source detection",
+        "Step 1: Intake and the motion plan",
+        "Step 2: Rebuild the exact frame",
+        "Step 3: Verify the still",
+        "Step 4: Motion",
+        "Step 5: Capture",
+        "Step 6: Motion checks (before any export)",
+        "Step 7: Export and report"
+      ]
+    },
+    {
+      "skill": "design-review",
+      "family": "design-media",
+      "source": "design-review/SKILL.md",
+      "bytes": 84868,
+      "lines": 1224,
+      "sha256": "49e3d7b60a36a2a89b82e57a7f1bc8ba3db2e47fe5c2895da668fdf767fc6ba9",
+      "adaptation": "generated",
+      "runtime_family": "design",
+      "upstream_stage_index": [
+        "/design-review: Design Audit → Fix → Verify",
+        "BROWSER SETUP (Aside — run this check BEFORE any browser step)",
+        "Translate the Aside scripts step by step",
+        "DESIGN SETUP (run this check BEFORE any design mockup command)",
+        "Phases 1-6: Design Audit Baseline",
+        "Modes",
+        "Regression (`--regression` or previous `design-baseline.json` found)",
+        "Phase 1: First Impression",
+        "Phase 2: Design System Extraction",
+        "Phase 3: Page-by-Page Visual Audit",
+        "DOM dump (DOM mode only: Setup printed `IMPECCABLE_READY` and the target is a URL)",
+        "Trunk Test (run on every page)",
+        "Design Audit Checklist (10 categories, ~80 items)",
+        "Phase 4: Interaction Flow Review",
+        "Phase 5: Cross-Page Consistency",
+        "Phase 6: Compile Report",
+        "Baseline",
+        "Regression Output"
+      ]
+    },
+    {
+      "skill": "design-shotgun",
+      "family": "design-media",
+      "source": "design-shotgun/SKILL.md",
+      "bytes": 35659,
+      "lines": 659,
+      "sha256": "883e8348f31fff6c12131926f88c82042f80fb6a6ba3a7fb40626d563f113dab",
+      "adaptation": "generated",
+      "runtime_family": "design",
+      "upstream_stage_index": [
+        "DESIGN SETUP (run this check BEFORE any design mockup command)",
+        "Step 1: Context Gathering",
+        "Step 2: Taste Memory",
+        "Step 3: Generate Variants",
+        "Step 3a: Concept Generation",
+        "Step 3b: Concept Confirmation",
+        "Step 3c: Parallel Generation",
+        "Step 3d: Results",
+        "Step 4: Comparison Board + Feedback Loop",
+        "Step 5: Feedback Confirmation",
+        "Step 6: Save & Next Steps"
+      ]
+    },
+    {
+      "skill": "diagram",
+      "family": "design-media",
+      "source": "diagram/SKILL.md",
+      "bytes": 16400,
+      "lines": 297,
+      "sha256": "b57372f3dfdbd0f7881d5d24baf6bbc02126b588c7177cf1fca2262c519cd0c2",
+      "adaptation": "generated",
+      "runtime_family": "docs",
+      "upstream_stage_index": [
+        "Plan Mode Safe Operations",
+        "Step 1 — Author the diagram",
+        "Step 3 — Render the triplet",
+        "Step 4 — Show and deliver"
+      ]
+    },
+    {
+      "skill": "make-pdf",
+      "family": "design-media",
+      "source": "make-pdf/SKILL.md",
+      "bytes": 19914,
+      "lines": 405,
+      "sha256": "7378d92b5142de4f05ff3b40b4766116194a3c0bea43e12cf8a44416baf356c9",
+      "adaptation": "generated",
+      "runtime_family": "docs",
+      "upstream_stage_index": [
+        "MAKE-PDF SETUP (run this check BEFORE any make-pdf command)",
+        "Plan Mode Safe Operations",
+        "Publication mode — cover + TOC + chapter breaks",
+        "Fast iteration via preview",
+        "CI mode — fail loud on missing assets",
+        "Output contract"
+      ]
+    },
+    {
+      "skill": "browse",
+      "family": "browser",
+      "source": "browse/SKILL.md",
+      "bytes": 34225,
+      "lines": 470,
+      "sha256": "ae6707dbc37d2a4638f8d8021800a486b2e1edd09909b85ebc189dc5d1466105",
+      "adaptation": "generated",
+      "runtime_family": "browser",
+      "upstream_stage_index": [
+        "Plan Mode Safe Operations",
+        "BROWSER SETUP (Aside — run this check BEFORE any browser step)",
+        "Translate the Aside scripts step by step",
+        "Pick the mode",
+        "Report"
+      ]
+    },
+    {
+      "skill": "open-gstack-browser",
+      "family": "browser",
+      "source": "open-gstack-browser/SKILL.md",
+      "bytes": 18646,
+      "lines": 411,
+      "sha256": "2dd3227c8a8534415d5b4161bd9cf6ef5b542540e37d5d0e50dbb09b7eecbc10",
+      "adaptation": "generated",
+      "runtime_family": "browser",
+      "upstream_stage_index": [
+        "Plan Mode Safe Operations",
+        "SETUP (run this check BEFORE any browse command)",
+        "Step 0: Check for a running browse daemon",
+        "Step 1: Connect",
+        "Step 2: Verify",
+        "Step 3: Guide the user to the Side Panel",
+        "Step 4: Demo",
+        "Step 5: Sidebar chat",
+        "Step 6: What's next"
+      ]
+    },
+    {
+      "skill": "setup-browser-cookies",
+      "family": "browser",
+      "source": "setup-browser-cookies/SKILL.md",
+      "bytes": 13422,
+      "lines": 206,
+      "sha256": "3d3f7db3ba114d43612a4d524a8b613470d64f17a95e9b1184b34a0e08df3309",
+      "adaptation": "generated",
+      "runtime_family": "browser",
+      "upstream_stage_index": [
+        "Plan Mode Safe Operations",
+        "1. Check for Aside",
+        "3. Prepare gstack's browser",
+        "5. Report honestly"
+      ]
+    },
+    {
+      "skill": "pair-agent",
+      "family": "browser",
+      "source": "pair-agent/SKILL.md",
+      "bytes": 20256,
+      "lines": 474,
+      "sha256": "81bc6ef65aac67ab8e963c55599b447cf860a562a0f664e3218963c5f6742404",
+      "adaptation": "generated",
+      "runtime_family": "browser",
+      "upstream_stage_index": [
+        "SETUP (run this check BEFORE any browse command)",
+        "Step 1: Check prerequisites",
+        "Step 2: Ask what they want",
+        "Step 3: Local or remote?",
+        "Step 4: Execute pairing",
+        "Step 5: Verify connection"
+      ]
+    },
+    {
+      "skill": "scrape",
+      "family": "browser",
+      "source": "scrape/SKILL.md",
+      "bytes": 27985,
+      "lines": 433,
+      "sha256": "79fd2bc6d9ba1f816f9200a747bbecd3c3a00abad59420e8b217f6d678c15b8f",
+      "adaptation": "generated",
+      "runtime_family": "browser",
+      "upstream_stage_index": [
+        "Plan Mode Safe Operations",
+        "BROWSER SETUP (Aside — run this check BEFORE any browser step)",
+        "Translate the Aside scripts step by step",
+        "Step 1 — Determine intent",
+        "Step 2 — Refuse mutating intents",
+        "Step 3 — Read the page",
+        "Output discipline",
+        "Capture Learnings"
+      ]
+    },
+    {
+      "skill": "skillify",
+      "family": "browser",
+      "source": "skillify/SKILL.md",
+      "bytes": 22383,
+      "lines": 538,
+      "sha256": "9b250b0d29164facc978c87247f7c9cc4301c45ed57c19955e0102b3471a8b85",
+      "adaptation": "generated",
+      "runtime_family": "browser",
+      "upstream_stage_index": [
+        "Iron contract — never write a half-broken skill to disk",
+        "Step 1 — Provenance guard (D1)",
+        "Step 2 — Propose name + triggers",
+        "Step 3 — Synthesize `script.ts` (D2)",
+        "Step 4 — Capture the fixture",
+        "Step 5 — Write `script.test.ts`",
+        "Step 6 — Resolve the canonical SDK path + read it",
+        "Step 7 — Stage the skill (D3 atomic write)",
+        "Step 8 — Run `$B skill test` against the staged dir",
+        "Step 9 — Approval gate",
+        "Step 10 — Commit (atomic) or discard",
+        "Step 11 — Confirm + verify",
+        "Capture Learnings"
+      ]
+    },
+    {
+      "skill": "ios-qa",
+      "family": "ios",
+      "source": "ios-qa/SKILL.md",
+      "bytes": 22598,
+      "lines": 395,
+      "sha256": "f8df2f01eac150b8b0446dccc344ca0e1e8e401550f974986311ee52d548eb00",
+      "adaptation": "generated",
+      "runtime_family": "ios",
+      "upstream_stage_index": [
+        "Architecture",
+        "Prerequisites",
+        "Phase 1: Read source, plan codegen",
+        "Phase 2: Bootstrap the device bridge",
+        "Phase 3: Vision-driven agent loop",
+        "Modes",
+        "Demo mode",
+        "Failure modes + recovery",
+        "Cleanup"
+      ]
+    },
+    {
+      "skill": "ios-fix",
+      "family": "ios",
+      "source": "ios-fix/SKILL.md",
+      "bytes": 8826,
+      "lines": 169,
+      "sha256": "bffd31d8797f855e762398bb0ae485fdea709bb824a7012547fecf2302279951",
+      "adaptation": "generated",
+      "runtime_family": "ios",
+      "upstream_stage_index": [
+        "Phase 1: Reproduce the bug",
+        "Phase 2: Locate root cause",
+        "Phase 3: Apply fix",
+        "Phase 4: Verify",
+        "Phase 5: Add regression test",
+        "Failure modes"
+      ]
+    },
+    {
+      "skill": "ios-design-review",
+      "family": "ios",
+      "source": "ios-design-review/SKILL.md",
+      "bytes": 9966,
+      "lines": 177,
+      "sha256": "afe54a6bc687f634363c45c2f2a64c51781db078af84569e0c71cea7fcbf5d4d",
+      "adaptation": "generated",
+      "runtime_family": "ios",
+      "upstream_stage_index": [
+        "iOS Design Review",
+        "Output",
+        "Failure modes"
+      ]
+    },
+    {
+      "skill": "ios-clean",
+      "family": "ios",
+      "source": "ios-clean/SKILL.md",
+      "bytes": 9323,
+      "lines": 174,
+      "sha256": "f4e599083e9fe2e22e1b05d50100a37376dc94e84132392a022187c52eb2d9c8",
+      "adaptation": "generated",
+      "runtime_family": "ios",
+      "upstream_stage_index": [
+        "Phase 1: Inventory",
+        "Phase 2: Remove",
+        "Phase 3: Verify"
+      ]
+    },
+    {
+      "skill": "ios-sync",
+      "family": "ios",
+      "source": "ios-sync/SKILL.md",
+      "bytes": 9431,
+      "lines": 167,
+      "sha256": "70b38c465123646b2a4bbf019a1e064a70992de257bddb7e90684c0c1f91605d",
+      "adaptation": "generated",
+      "runtime_family": "ios",
+      "upstream_stage_index": [
+        "Phase 1: Detect installed version",
+        "Phase 2: Regenerate codegen output",
+        "Phase 3: Review the generated diff",
+        "Phase 4: Verify",
+        "Failure modes"
+      ]
+    },
+    {
+      "skill": "careful",
+      "family": "safety",
+      "source": "careful/SKILL.md",
+      "bytes": 4739,
+      "lines": 103,
+      "sha256": "f3dfed24accce14ad5d59a88f2f7f6aa21dc1b3b86416375b39268282807dfa3",
+      "adaptation": "generated",
+      "runtime_family": "safety",
+      "upstream_stage_index": []
+    },
+    {
+      "skill": "freeze",
+      "family": "safety",
+      "source": "freeze/SKILL.md",
+      "bytes": 4264,
+      "lines": 92,
+      "sha256": "471dc015b9fda6b28f7ca5f797f74361054e9d76fb5739f7f3c1799026039a0b",
+      "adaptation": "generated",
+      "runtime_family": "safety",
+      "upstream_stage_index": []
+    },
+    {
+      "skill": "guard",
+      "family": "safety",
+      "source": "guard/SKILL.md",
+      "bytes": 3824,
+      "lines": 84,
+      "sha256": "74417889d310a0c62cf0be65a88e056ee4709b8fcea20c73e33b323f39e8956c",
+      "adaptation": "generated",
+      "runtime_family": "safety",
+      "upstream_stage_index": [
+        "/guard — Full Safety Mode"
+      ]
+    },
+    {
+      "skill": "unfreeze",
+      "family": "safety",
+      "source": "unfreeze/SKILL.md",
+      "bytes": 1565,
+      "lines": 36,
+      "sha256": "8c73bb497362fa32f37a961e749714c2c7fa7ffa1d4664e0ce54fec3da188245",
+      "adaptation": "generated",
+      "runtime_family": "safety",
+      "upstream_stage_index": []
+    },
+    {
+      "skill": "benchmark-models",
+      "family": "external-runtimes",
+      "source": "benchmark-models/SKILL.md",
+      "bytes": 15635,
+      "lines": 280,
+      "sha256": "1e6e984507b3d12aeb8542446f08889f9576fdeff79694725e43c5d29db1f32d",
+      "adaptation": "generated",
+      "runtime_family": "external",
+      "upstream_stage_index": [
+        "Plan Mode Safe Operations",
+        "/benchmark-models — Cross-Model Skill Benchmark",
+        "Step 0: Locate the binary",
+        "Step 1: Choose a prompt",
+        "Step 2: Choose providers",
+        "Step 3: Decide on judge",
+        "Step 4: Run the benchmark",
+        "Step 5: Interpret results",
+        "Step 6: Offer to save results"
+      ]
+    },
+    {
+      "skill": "codex",
+      "family": "external-runtimes",
+      "source": "codex/SKILL.md",
+      "bytes": 37851,
+      "lines": 639,
+      "sha256": "a307b65f33479d1c81c3d495888eef7e135e1a8ed80c74ccf86dc0a0e9d6b5c1",
+      "adaptation": "generated",
+      "runtime_family": "external",
+      "upstream_stage_index": [
+        "Step 0: Detect platform and base branch",
+        "Step 0.4: Check codex binary",
+        "Step 0.5: Auth probe + model probe + version check",
+        "Step 0.6: Resolve portable roots",
+        "Step 1: Detect mode",
+        "Synthesis recommendation (REQUIRED) — all modes",
+        "Plan File Review Report",
+        "Generate the report",
+        "GSTACK REVIEW REPORT",
+        "Model & Reasoning"
+      ]
+    },
+    {
+      "skill": "eval-plan",
+      "family": "external-runtimes",
+      "source": "eval-plan/SKILL.md",
+      "bytes": 18701,
+      "lines": 306,
+      "sha256": "001b5bb31af6b666b661732c26d412ec104b249f95fccfc6c50667c59b14fe24",
+      "adaptation": "generated",
+      "runtime_family": "external",
+      "upstream_stage_index": [
+        "Step 1: Preregistration",
+        "Step 1b: Arms and their price",
+        "Step 1c: Candidate-side blinding",
+        "Step 2: zero-cost stub-model dry run",
+        "Step 3: Priced pilot (n≈3)",
+        "Step 4: The approval ask"
+      ]
+    },
+    {
+      "skill": "ubicloud",
+      "family": "external-runtimes",
+      "source": "ubicloud/SKILL.md",
+      "bytes": 13754,
+      "lines": 264,
+      "sha256": "e1cff691e87b18023700706f9cf6f0781e849c4e3be72f9cfb5c49dd36cf32df",
+      "adaptation": "generated",
+      "runtime_family": "external",
+      "upstream_stage_index": [
+        "Step 0: Prerequisites (set/unset only)",
+        "Step 1: Preflight the project",
+        "Step 2: Launch watched, with a TTL that covers the run",
+        "Step 3: One committed verify per repository",
+        "Step 4: Read the result",
+        "Resume checklist after a wake or a machine swap"
+      ]
+    },
+    {
+      "skill": "write-skill",
+      "family": "skill-authoring",
+      "source": "write-skill/SKILL.md",
+      "bytes": 8692,
+      "lines": 147,
+      "sha256": "2823393aa285b936192360351892949e9857da779f6d5b663d880b675113a80c",
+      "adaptation": "generated",
+      "runtime_family": "skill-authoring",
+      "upstream_stage_index": [
+        "4. Check and record"
+      ]
+    },
+    {
+      "skill": "captain",
+      "family": "orchestration",
+      "source": "captain/SKILL.md",
+      "bytes": 25734,
+      "lines": 418,
+      "sha256": "bcb52efe5223270d7869b977a74e73b0351629b29cc027ca2ae9a05ebe8463a2",
+      "adaptation": "generated",
+      "runtime_family": "orchestration",
+      "upstream_stage_index": [
+        "The READY contract",
+        "Reports and waves"
+      ]
+    },
+    {
+      "skill": "canary",
+      "family": "browser",
+      "source": "canary/SKILL.md",
+      "bytes": 29614,
+      "lines": 448,
+      "sha256": "44ac3d43728b022c6d0eced562405ed1d2f11f895ecf5a6f52620b08c593f590",
+      "adaptation": "generated",
+      "runtime_family": "qa",
+      "upstream_stage_index": [
+        "BROWSER SETUP (Aside — run this check BEFORE any browser step)",
+        "Translate the Aside scripts step by step",
+        "Step 0: Detect platform and base branch",
+        "Phase 1: Setup",
+        "Phase 2: Baseline Capture (--baseline mode)",
+        "Phase 3: Page Discovery",
+        "Phase 4: Pre-Deploy Snapshot (if no baseline exists)",
+        "Phase 5: Continuous Monitoring Loop",
+        "Phase 6: Health Report",
+        "Phase 7: Baseline Update"
+      ]
+    }
+  ],
+  "aliases": {
+    "connect-chrome": "open-gstack-browser"
+  }
+}
