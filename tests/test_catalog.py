@@ -74,6 +74,39 @@ class CatalogTest(unittest.TestCase):
             self.assertNotEqual(self.generate(output).returncode, 0)
             self.assertFalse((Path(outside) / "sentinel").exists())
 
+    def test_every_generated_entry_inlines_its_source_checks(self):
+        with tempfile.TemporaryDirectory() as temp:
+            output = Path(temp)
+            result = self.generate(output)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            spec = importlib.util.spec_from_file_location(
+                "rstack_workflows_inline_checks", ROOT / "generator" / "workflows.py"
+            )
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            inventory = json.loads((ROOT / "inventory.json").read_text())
+            aliases = inventory["aliases"]
+            entries = sorted((output / "skills").glob("*/SKILL.md"))
+            self.assertEqual(len(entries), 59)
+            failures = []
+            for entry in entries:
+                name = entry.parent.name
+                canonical = aliases.get(name, name)
+                expected = "\n".join("- " + check for check in module.WORKFLOWS[canonical]["checks"])
+                content = entry.read_text()
+                header = "## Обязательный чеклист результата\n\n"
+                if header not in content:
+                    failures.append(name + ": inline checklist is missing")
+                else:
+                    actual = content.split(header, 1)[1].split("\n\n## Материалы", 1)[0].strip()
+                    if actual != expected:
+                        failures.append(name + ": inline checks differ from source")
+                if "Перед отчётом проверь [критерии и сценарии]" in content:
+                    failures.append(name + ": acceptance reference remains mandatory")
+                if "развёрнутые критерии и сценарии" not in content or "дополнительная справка" not in content:
+                    failures.append(name + ": expanded acceptance is not marked optional")
+            self.assertEqual(failures, [])
+
     def test_capabilities_have_specific_preconditions(self):
         spec = importlib.util.spec_from_file_location("rstack_workflows", ROOT / "generator" / "workflows.py")
         module = importlib.util.module_from_spec(spec)

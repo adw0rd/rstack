@@ -47,10 +47,17 @@ def entry(workflow):
     if prerequisites:
         prerequisites = "\n\n" + prerequisites
     steps = "\n".join(f"{index}. {step}" for index, step in enumerate(workflow["steps"], 1))
+    resources = RESOURCES.replace(
+        "Перед отчётом проверь [критерии и сценарии](references/acceptance.md).",
+        "Обязательный чеклист приведён выше; [развёрнутые критерии и сценарии](references/acceptance.md) — дополнительная справка.",
+    )
+    checklist = "\n\n## Обязательный чеклист результата\n\n" + "\n".join(
+        "- " + check for check in workflow["checks"]
+    )
     return (
         header + "# " + title + "\n\nРезультат: " + workflow["artifact"] + "\n\n"
         + CONTRACT + "\n## Условия\n\n" + CAPABILITY_NOTES[workflow["capability"]] + prerequisites
-        + "\n\n## Порядок работы\n\n" + steps + "\n\n" + RESOURCES
+        + "\n\n## Порядок работы\n\n" + steps + checklist + "\n\n" + resources
     )
 
 
