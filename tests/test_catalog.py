@@ -120,6 +120,55 @@ class CatalogTest(unittest.TestCase):
         self.assertNotEqual(data["ios-qa"]["steps"], data["ios-sync"]["steps"])
         self.assertNotEqual(data["browse"]["steps"], data["pair-agent"]["steps"])
 
+    def test_rcode_0_10_runtime_guidance_and_core_alignment(self):
+        with tempfile.TemporaryDirectory() as temp:
+            output = Path(temp)
+            self.assertEqual(self.generate(output).returncode, 0)
+            spec = importlib.util.spec_from_file_location(
+                "rstack_workflows_runtime", ROOT / "generator" / "workflows.py"
+            )
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            inventory = json.loads((ROOT / "inventory.json").read_text())
+            aliases = inventory["aliases"]
+            generated_entries = sorted((output / "skills").glob("*/SKILL.md"))
+            core_entries = [ROOT / "skills" / name / "SKILL.md" for name in ("review", "qa", "investigate")]
+            self.assertEqual(len(generated_entries), 59)
+            for entry in [*generated_entries, *core_entries]:
+                text = entry.read_text()
+                self.assertLessEqual(len(entry.read_bytes()), 8192, entry)
+                self.assertIn("ask_user", text, entry)
+                self.assertIn("read_memory", text, entry)
+                self.assertIn("write_memory", text, entry)
+                self.assertIn("--sandbox", text, entry)
+                self.assertIn("--sandbox read-only", text, entry)
+                self.assertIn("TMPDIR", text, entry)
+                self.assertIn("explorer`/`reviewer`/`worker", text, entry)
+                self.assertIn("интерактивному основному агенту вне `/plan`", text, entry)
+                self.assertIn("127.0.0.1", text, entry)
+                self.assertNotIn("В `/plan` и read-only не вызывай shell", text, entry)
+                self.assertNotIn("вопросы пользователю задавай обычным текстом", text, entry)
+                self.assertNotIn("Вопрос пользователю задай текстом", text, entry)
+                self.assertNotIn("спроси пользователя обычным текстом", text, entry)
+                for line in text.splitlines():
+                    if re.match(r"^(?:\d+\.|-)\s", line):
+                        self.assertEqual(line.count("`") % 2, 0, (entry, line))
+            for entry in generated_entries:
+                name = entry.parent.name
+                canonical = aliases.get(name, name)
+                text = entry.read_text()
+                steps_block = text.split("## Порядок работы\n\n", 1)[1].split("\n\n## Обязательный чеклист", 1)[0]
+                step_lines = steps_block.splitlines()
+                self.assertEqual(len(step_lines), len(module.WORKFLOWS[canonical]["steps"]), name)
+                for index, line in enumerate(step_lines, 1):
+                    self.assertTrue(line.startswith(f"{index}. "), (name, line))
+            eng_text = (output / "skills" / "plan-eng-review" / "SKILL.md").read_text()
+            self.assertIn("исключи побочные эффекты вне пробы", eng_text)
+            learn_text = (output / "skills" / "learn" / "SKILL.md").read_text()
+            self.assertEqual(len(module.WORKFLOWS["learn"]["steps"]), 6)
+            self.assertIn("чтение через `read_memory` по `id`", learn_text)
+            self.assertIn("запись через `write_memory` со `scope` `project` или `global`", learn_text)
+
 
 if __name__ == "__main__":
     unittest.main()

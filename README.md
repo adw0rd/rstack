@@ -44,7 +44,7 @@ python3 bin/rstack install --rcode /path/to/rcode --project /path/to/other-proje
 
 ## Необязательный runtime helper
 
-Требуются Python 3.10+ и Git. Дополнительные Python-пакеты не нужны. Helper ускоряет рутинный сбор данных; скиллы могут работать без него через native tools rcode. В plan mode shell недоступен: применяйте `read_file`, `search`, `list_files` и явно отмечайте неисполненные проверки.
+Требуются Python 3.10+ и Git. Дополнительные Python-пакеты не нужны. Helper ускоряет рутинный сбор данных; скиллы могут работать без него через native tools rcode. В `/plan` shell и запись файлов недоступны: применяйте `read_file`, `search`, `list_files`, уточняйте реальные развилки через `ask_user` (в интерактиве основного агента) и явно отмечайте неисполненные проверки. Межсессионные заметки (`read_memory`/`write_memory`, запись — только у интерактивного основного агента вне `/plan`) используются исключительно для устойчивых `[stated]` решений без секретов, а opt-in ОС-песочница модельного shell (`--sandbox`, `/sandbox`) управляется самим rcode и сохраняется всеми скиллами.
 
 ```sh
 python3 bin/rstack doctor --root /path/to/project
