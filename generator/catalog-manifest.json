@@ -5,413 +5,413 @@
       "canonical": "autoplan",
       "capability": "native",
       "runtime_family": "planning",
-      "entry_bytes": 5469
+      "entry_bytes": 5442
     },
     {
       "skill": "benchmark",
       "canonical": "benchmark",
       "capability": "native",
       "runtime_family": "qa",
-      "entry_bytes": 5046
+      "entry_bytes": 5019
     },
     {
       "skill": "benchmark-models",
       "canonical": "benchmark-models",
       "capability": "external",
       "runtime_family": "external",
-      "entry_bytes": 5779
+      "entry_bytes": 5794
     },
     {
       "skill": "browse",
       "canonical": "browse",
       "capability": "browser",
       "runtime_family": "browser",
-      "entry_bytes": 8039
+      "entry_bytes": 8054
     },
     {
       "skill": "canary",
       "canonical": "canary",
       "capability": "browser",
       "runtime_family": "qa",
-      "entry_bytes": 5747
+      "entry_bytes": 5762
     },
     {
       "skill": "captain",
       "canonical": "captain",
       "capability": "native",
       "runtime_family": "orchestration",
-      "entry_bytes": 5499
+      "entry_bytes": 5472
     },
     {
       "skill": "careful",
       "canonical": "careful",
       "capability": "native",
       "runtime_family": "safety",
-      "entry_bytes": 5349
+      "entry_bytes": 5322
     },
     {
       "skill": "codex",
       "canonical": "codex",
       "capability": "external",
       "runtime_family": "external",
-      "entry_bytes": 5817
+      "entry_bytes": 5832
     },
     {
       "skill": "connect-chrome",
       "canonical": "open-gstack-browser",
       "capability": "browser",
       "runtime_family": "browser",
-      "entry_bytes": 5549
+      "entry_bytes": 5564
     },
     {
       "skill": "context-restore",
       "canonical": "context-restore",
       "capability": "native",
       "runtime_family": "context",
-      "entry_bytes": 5364
+      "entry_bytes": 5490
     },
     {
       "skill": "context-save",
       "canonical": "context-save",
       "capability": "native",
       "runtime_family": "context",
-      "entry_bytes": 5316
+      "entry_bytes": 5289
     },
     {
       "skill": "cso",
       "canonical": "cso",
       "capability": "native",
       "runtime_family": "review",
-      "entry_bytes": 5649
+      "entry_bytes": 5622
     },
     {
       "skill": "design-consultation",
       "canonical": "design-consultation",
       "capability": "native",
       "runtime_family": "planning",
-      "entry_bytes": 5015
+      "entry_bytes": 4988
     },
     {
       "skill": "design-html",
       "canonical": "design-html",
       "capability": "native",
       "runtime_family": "design",
-      "entry_bytes": 5278
+      "entry_bytes": 5251
     },
     {
       "skill": "design-motion",
       "canonical": "design-motion",
       "capability": "companion",
       "runtime_family": "design",
-      "entry_bytes": 5687
+      "entry_bytes": 5702
     },
     {
       "skill": "design-review",
       "canonical": "design-review",
       "capability": "browser",
       "runtime_family": "design",
-      "entry_bytes": 5656
+      "entry_bytes": 5671
     },
     {
       "skill": "design-shotgun",
       "canonical": "design-shotgun",
       "capability": "native",
       "runtime_family": "design",
-      "entry_bytes": 5409
+      "entry_bytes": 5382
     },
     {
       "skill": "deslop-shared-libs",
       "canonical": "deslop-shared-libs",
       "capability": "native",
       "runtime_family": "review",
-      "entry_bytes": 5015
+      "entry_bytes": 4988
     },
     {
       "skill": "devex-review",
       "canonical": "devex-review",
       "capability": "native",
       "runtime_family": "qa",
-      "entry_bytes": 5364
+      "entry_bytes": 5337
     },
     {
       "skill": "diagram",
       "canonical": "diagram",
       "capability": "native",
       "runtime_family": "docs",
-      "entry_bytes": 5073
+      "entry_bytes": 5046
     },
     {
       "skill": "document-generate",
       "canonical": "document-generate",
       "capability": "native",
       "runtime_family": "docs",
-      "entry_bytes": 4918
+      "entry_bytes": 4891
     },
     {
       "skill": "document-release",
       "canonical": "document-release",
       "capability": "native",
       "runtime_family": "docs",
-      "entry_bytes": 4965
+      "entry_bytes": 4938
     },
     {
       "skill": "eval-plan",
       "canonical": "eval-plan",
       "capability": "native",
       "runtime_family": "external",
-      "entry_bytes": 4986
+      "entry_bytes": 4959
     },
     {
       "skill": "freeze",
       "canonical": "freeze",
       "capability": "native",
       "runtime_family": "safety",
-      "entry_bytes": 5364
+      "entry_bytes": 5337
     },
     {
       "skill": "gstack-upgrade",
       "canonical": "gstack-upgrade",
       "capability": "native",
       "runtime_family": "release",
-      "entry_bytes": 5368
+      "entry_bytes": 5341
     },
     {
       "skill": "guard",
       "canonical": "guard",
       "capability": "native",
       "runtime_family": "safety",
-      "entry_bytes": 5202
+      "entry_bytes": 5175
     },
     {
       "skill": "health",
       "canonical": "health",
       "capability": "native",
       "runtime_family": "review",
-      "entry_bytes": 5461
+      "entry_bytes": 5434
     },
     {
       "skill": "ios-clean",
       "canonical": "ios-clean",
       "capability": "device",
       "runtime_family": "ios",
-      "entry_bytes": 5603
+      "entry_bytes": 5618
     },
     {
       "skill": "ios-design-review",
       "canonical": "ios-design-review",
       "capability": "device",
       "runtime_family": "ios",
-      "entry_bytes": 5325
+      "entry_bytes": 5340
     },
     {
       "skill": "ios-fix",
       "canonical": "ios-fix",
       "capability": "device",
       "runtime_family": "ios",
-      "entry_bytes": 5397
+      "entry_bytes": 5412
     },
     {
       "skill": "ios-qa",
       "canonical": "ios-qa",
       "capability": "device",
       "runtime_family": "ios",
-      "entry_bytes": 5619
+      "entry_bytes": 5634
     },
     {
       "skill": "ios-sync",
       "canonical": "ios-sync",
       "capability": "device",
       "runtime_family": "ios",
-      "entry_bytes": 5390
+      "entry_bytes": 5405
     },
     {
       "skill": "land-and-deploy",
       "canonical": "land-and-deploy",
       "capability": "native",
       "runtime_family": "release",
-      "entry_bytes": 5096
+      "entry_bytes": 5069
     },
     {
       "skill": "landing-report",
       "canonical": "landing-report",
       "capability": "native",
       "runtime_family": "release",
-      "entry_bytes": 4650
+      "entry_bytes": 4623
     },
     {
       "skill": "learn",
       "canonical": "learn",
       "capability": "native",
       "runtime_family": "context",
-      "entry_bytes": 5970
+      "entry_bytes": 5943
     },
     {
       "skill": "make-pdf",
       "canonical": "make-pdf",
       "capability": "companion",
       "runtime_family": "docs",
-      "entry_bytes": 5523
+      "entry_bytes": 5538
     },
     {
       "skill": "modernize",
       "canonical": "modernize",
       "capability": "native",
       "runtime_family": "release",
-      "entry_bytes": 5110
+      "entry_bytes": 5083
     },
     {
       "skill": "office-hours",
       "canonical": "office-hours",
       "capability": "native",
       "runtime_family": "planning",
-      "entry_bytes": 5520
+      "entry_bytes": 5493
     },
     {
       "skill": "open-gstack-browser",
       "canonical": "open-gstack-browser",
       "capability": "browser",
       "runtime_family": "browser",
-      "entry_bytes": 5554
+      "entry_bytes": 5569
     },
     {
       "skill": "pair-agent",
       "canonical": "pair-agent",
       "capability": "browser",
       "runtime_family": "browser",
-      "entry_bytes": 5765
+      "entry_bytes": 5780
     },
     {
       "skill": "plan-ceo-review",
       "canonical": "plan-ceo-review",
       "capability": "native",
       "runtime_family": "planning",
-      "entry_bytes": 4992
+      "entry_bytes": 4965
     },
     {
       "skill": "plan-design-review",
       "canonical": "plan-design-review",
       "capability": "native",
       "runtime_family": "planning",
-      "entry_bytes": 5196
+      "entry_bytes": 5169
     },
     {
       "skill": "plan-devex-review",
       "canonical": "plan-devex-review",
       "capability": "native",
       "runtime_family": "planning",
-      "entry_bytes": 5317
+      "entry_bytes": 5290
     },
     {
       "skill": "plan-eng-review",
       "canonical": "plan-eng-review",
       "capability": "native",
       "runtime_family": "planning",
-      "entry_bytes": 8178
+      "entry_bytes": 8151
     },
     {
       "skill": "plan-tune",
       "canonical": "plan-tune",
       "capability": "native",
       "runtime_family": "planning",
-      "entry_bytes": 5488
+      "entry_bytes": 5461
     },
     {
       "skill": "qa-only",
       "canonical": "qa-only",
       "capability": "native",
       "runtime_family": "qa",
-      "entry_bytes": 6021
+      "entry_bytes": 5994
     },
     {
       "skill": "retro",
       "canonical": "retro",
       "capability": "native",
       "runtime_family": "context",
-      "entry_bytes": 4896
+      "entry_bytes": 4869
     },
     {
       "skill": "scrape",
       "canonical": "scrape",
       "capability": "native",
       "runtime_family": "browser",
-      "entry_bytes": 5099
+      "entry_bytes": 5072
     },
     {
       "skill": "setup-browser-cookies",
       "canonical": "setup-browser-cookies",
       "capability": "browser",
       "runtime_family": "browser",
-      "entry_bytes": 5694
+      "entry_bytes": 5709
     },
     {
       "skill": "setup-deploy",
       "canonical": "setup-deploy",
       "capability": "native",
       "runtime_family": "release",
-      "entry_bytes": 4856
+      "entry_bytes": 4829
     },
     {
       "skill": "setup-gbrain",
       "canonical": "setup-gbrain",
       "capability": "companion",
       "runtime_family": "context",
-      "entry_bytes": 5884
+      "entry_bytes": 5899
     },
     {
       "skill": "ship",
       "canonical": "ship",
       "capability": "native",
       "runtime_family": "release",
-      "entry_bytes": 5739
+      "entry_bytes": 5712
     },
     {
       "skill": "skillify",
       "canonical": "skillify",
       "capability": "browser",
       "runtime_family": "browser",
-      "entry_bytes": 5738
+      "entry_bytes": 5753
     },
     {
       "skill": "spec",
       "canonical": "spec",
       "capability": "native",
       "runtime_family": "planning",
-      "entry_bytes": 5117
+      "entry_bytes": 5090
     },
     {
       "skill": "sync-gbrain",
       "canonical": "sync-gbrain",
       "capability": "companion",
       "runtime_family": "context",
-      "entry_bytes": 5717
+      "entry_bytes": 5732
     },
     {
       "skill": "test-audit",
       "canonical": "test-audit",
       "capability": "native",
       "runtime_family": "review",
-      "entry_bytes": 5029
+      "entry_bytes": 5002
     },
     {
       "skill": "ubicloud",
       "canonical": "ubicloud",
       "capability": "external",
       "runtime_family": "external",
-      "entry_bytes": 5583
+      "entry_bytes": 5598
     },
     {
       "skill": "unfreeze",
       "canonical": "unfreeze",
       "capability": "native",
       "runtime_family": "safety",
-      "entry_bytes": 4936
+      "entry_bytes": 4909
     },
     {
       "skill": "write-skill",
       "canonical": "write-skill",
       "capability": "native",
       "runtime_family": "skill-authoring",
-      "entry_bytes": 5196
+      "entry_bytes": 5169
     }
   ],
   "core": [
