@@ -146,6 +146,21 @@ class CatalogTest(unittest.TestCase):
                 self.assertIn("explorer`/`reviewer`/`worker", text, entry)
                 self.assertIn("интерактивному основному агенту вне `/plan`", text, entry)
                 self.assertIn("127.0.0.1", text, entry)
+                self.assertIn("<rcode_compaction>", text, entry)
+                self.assertIn("/btw", text, entry)
+                self.assertIn("mid-turn", text, entry)
+                self.assertIn("подкаталоги", text, entry)
+                self.assertRegex(text, r"разрешённ(?:ом корне|ого корня)", entry)
+                self.assertIn("схеме `write_file`", text, entry)
+                self.assertIn("`write_file` после `read_file`", text, entry)
+                self.assertRegex(text, r"обе (?:записи|операции записи) обновляют снимок", entry)
+                self.assertRegex(
+                    text,
+                    r"не дают прав|не выдают новых разрешений|не как новые права",
+                    entry,
+                )
+                self.assertIn("историческ", text, entry)
+                self.assertIn("N\\t", text, entry)
                 self.assertNotIn("В `/plan` и read-only не вызывай shell", text, entry)
                 self.assertNotIn("вопросы пользователю задавай обычным текстом", text, entry)
                 self.assertNotIn("Вопрос пользователю задай текстом", text, entry)
@@ -168,6 +183,28 @@ class CatalogTest(unittest.TestCase):
             self.assertEqual(len(module.WORKFLOWS["learn"]["steps"]), 6)
             self.assertIn("чтение через `read_memory` по `id`", learn_text)
             self.assertIn("запись через `write_memory` со `scope` `project` или `global`", learn_text)
+            restore_text = (output / "skills" / "context-restore" / "SKILL.md").read_text()
+            self.assertIn("сводку `<rcode_compaction>` в контексте сессии", restore_text)
+            self.assertIn(
+                "заметки из `<rcode_memory_index>` прочитай по `id` через `read_memory`",
+                restore_text,
+            )
+            self.assertNotIn(
+                "`<rcode_compaction>` и релевантные заметки `<rcode_memory_index>` через `read_memory`",
+                restore_text,
+            )
+            readme_text = (ROOT / "README.md").read_text()
+            for token in (
+                "--sandbox",
+                "/sandbox",
+                "<rcode_compaction>",
+                "/btw",
+                "N\\t",
+                "подкаталоги",
+                "схеме инструмента",
+                "без расширения разрешений",
+            ):
+                self.assertIn(token, readme_text)
 
 
 if __name__ == "__main__":

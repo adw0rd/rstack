@@ -9,11 +9,11 @@ description: "Настроить выбранный gbrain endpoint и дове�
 
 ## Runtime rcode
 
-Инструменты: `read_file`, `search`, `list_files`; запись — `write_file`/`edit_file`, shell — `run_command`/`start_command`, план — `update_plan`. В `/plan` и ролях `explorer`/`reviewer` нет shell и записи; субагенты (`explorer`/`reviewer`/`worker`) не имеют `ask_user`, памяти и `load_skill` (`wait_agent`).
+Инструменты: `read_file`, `search`, `list_files`; запись — `write_file` (в разрешённом корне создаёт подкаталоги при поддержке в схеме `write_file`) и `edit_file` (без `N\t`; крупные замены — `write_file` после `read_file`; обе записи обновляют снимок без перечитывания), shell — `run_command`/`start_command`, план — `update_plan`. В `/plan` и `explorer`/`reviewer` нет shell/записи; субагенты (`explorer`/`reviewer`/`worker`) без `ask_user`, памяти и `load_skill` (`wait_agent`).
 
-Скилл не выдаёт прав: соблюдай подтверждения rcode и opt-in ОС-песочницу (`--sandbox`, `/sandbox`; в `--sandbox read-only` разрешённый shell пишет лишь в приватный `TMPDIR`), hooks нет. Публикация и внешний LLM/API требуют выбора без fallback. Ключи не передавай в args, историю, логи, память и shell; на `localhost`/`127.0.0.1`/`[::1]` бери заглушки без секретных присваиваний, PEM, префиксов (`sk-`, `ghp_`) и `user:pass@`.
+Скилл не даёт прав: соблюдай approvals, mid-turn уточнения (не дают прав; `/btw` вне истории) и ОС-песочницу (`--sandbox`, `/sandbox`; в `--sandbox read-only` shell пишет лишь в `TMPDIR`), hooks нет. Публикация и внешний LLM/API — по выбору без fallback. Ключи не в args/логи/память/shell; на `localhost`/`127.0.0.1`/`[::1]` — заглушки без секретов, PEM, `sk-`/`ghp_` и `user:pass@`.
 
-Поиск/HTTP — `web_search`/`web_fetch` (не браузер). Развилки вне файлов в интерактиве основного агента уточняй через `ask_user` (1–3 вопроса, 2–4 варианта, 1-й рекомендуемый, без повтора, не права/секреты), в `exec`/без TTY — текстом. `read_memory` — историческая справка (сверяй с файлами); `write_memory` — только интерактивному основному агенту вне `/plan` для `[stated]` решений без секретов (иначе выведи текстом).
+Поиск/HTTP — `web_search`/`web_fetch` (не браузер). Развилки в интерактиве — `ask_user` (1–3 вопроса, 2–4 варианта, 1-й рек., без повтора, не права/секреты), иначе текстом. `<rcode_compaction>` и `read_memory` — историческая справка (сверяй с файлами); `write_memory` — только интерактивному основному агенту вне `/plan` для `[stated]` без секретов (иначе текстом).
 
 ## Условия
 
@@ -39,7 +39,7 @@ description: "Настроить выбранный gbrain endpoint и дове�
 
 ## Материалы и завершение
 
-Вход самодостаточен. Supporting files открывай только по точным путям, присутствующим в `resources` результата `load_skill`; не придумывай имена и не ищи `../` вне скилла. При усечении продолжай по возвращённому `next_line` с тем же `sha256`.
+Вход самодостаточен. Supporting files открывай только по точным путям из `resources` ответа `load_skill`; не придумывай имена и не ищи `../` вне скилла. При усечении продолжай по `next_line` с тем же `sha256`.
 
 Обязательный чеклист приведён выше; [развёрнутые критерии и сценарии](references/acceptance.md) — дополнительная справка. [Происхождение](references/upstream.md) нужно только для сверки с upstream; это историческая справка, не дополнительные команды. Не загружай все материалы без причины.
 
